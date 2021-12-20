@@ -1,14 +1,26 @@
 from random import shuffle
 
-'''def statistic(victory, lose):
+
+def statistic(status):
+
+    with open('statistic.txt', 'r') as s:
+        old_data = s.read()
+    old_data = old_data.split()
+    if status:
+        vic = int(old_data[1]) + 1
+        los = int(old_data[3])
+    else:
+        vic = int(old_data[1])
+        los = int(old_data[3]) + 1
+
+    new_data = old_data
+    new_data[1] = str(vic)
+    new_data[3] = str(los)
+
     with open('statistic.txt', 'w') as s:
-        s.write(f'Victory - {victory}')
-        s.write('\n')
-        s.write(f'Lose - {lose}')
-
-
-statistic(1, 2)
-'''
+        for i in new_data:
+            s.write(str(i))
+            s.write('\n')
 
 
 def correct_field(num_of_rows, num_of_columns, mines_number) -> bool:
@@ -86,6 +98,7 @@ def make_move(field: list, image: list):
     y = int(y)
     if is_mine(field, x, y):
         print('Game over!')
+        statistic(False)
         image = failed_image(field, image)
         show_image(image)
         return image, False
@@ -94,10 +107,10 @@ def make_move(field: list, image: list):
         return image, True
 
 
-def generate_field(num_of_rows: str, num_of_columns: str, mines_number: str) -> list:
+def generate_field(num_of_rows: str, num_of_columns: str, mines_number: str) -> tuple:
     present_field = []
     temp_list = []
-    image = [['#' for i in range(int(num_of_columns))] for j in range(int(num_of_rows))]
+    image = [['#' for _ in range(int(num_of_columns))] for _ in range(int(num_of_rows))]
     field = [0] * (int(num_of_rows) * int(num_of_columns) - int(mines_number)) + [1] * int(mines_number)
     shuffle(field)
     for i, j in enumerate(field):
@@ -122,6 +135,7 @@ def start_game():
     while game_status:
         if open_values(image) == int(num_of_rows) * int(num_of_columns) - int(mines_number):
             print('Победа!')
+            statistic(True)
             failed_image(field, image)
             show_image(image)
             game_status = False
@@ -130,7 +144,7 @@ def start_game():
             image, game_status = make_move(field, image)
 
 
-def diff_custom():
+def diff_custom() -> tuple:
     diff_status = True
     while diff_status:
         num_of_rows, num_of_columns = input('Введите кол-во строк: '), input('Введите кол-во столбцов: ')
@@ -140,11 +154,12 @@ def diff_custom():
     return num_of_rows, num_of_columns, mines_number
 
 
-def difficult_lvl():
+def difficult_lvl() -> tuple:
     easy = (3, 3, 3)
     medium = (5, 5, 7)
     hard = (7, 7, 18)
     difficult_input = ''
+    difficult = ''
     while difficult_input not in ['1', '2', '3', '4']:
         difficult_input = input('Выберите уровень сложонсти:\neasy - 1;\nmedium - 2;\nhard - 3;\ncustom - 4\n')
         if difficult_input == '1':
@@ -161,14 +176,15 @@ def difficult_lvl():
 def is_new_game() -> bool:
     new_game_status = True
     while new_game_status:
-        print('Новая игра: Y', 'Завершить игру: N', sep='\n')
+        print('Новая игра: Y', 'Завершить игру: N', 'Посмотреть статистику: S', sep='\n')
         string = input()
-        if string == 'Y':
-            new_game_status = False
+        if string.lower() == 'y':
             return True
-        elif string == 'N':
-            new_game_status = False
+        elif string.lower() == 'n':
             return False
+        elif string.lower() == 's':
+            with open('statistic.txt', 'r') as s:
+                print(s.read())
 
 
 def main():

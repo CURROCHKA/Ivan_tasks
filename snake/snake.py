@@ -3,7 +3,7 @@ from collections import deque
 
 
 class Snake:
-    def __init__(self, coord: tuple, size: tuple, color: str = 'green'):
+    def __init__(self, coord: tuple, size: tuple, color: tuple = (0, 255, 0)):
         self.x, self.y = coord
         self.size = size
         self.color = color

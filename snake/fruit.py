@@ -2,7 +2,7 @@ import pygame
 
 
 class Fruit:
-    def __init__(self, coord: tuple, size: tuple, color: str = 'red'):
+    def __init__(self, coord: tuple, size: tuple, color: tuple = (255, 0, 0)):
         self.x, self.y = coord
         self.size = size
         self.color = color

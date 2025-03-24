@@ -16,7 +16,6 @@ from config import (
     FONT_NAME,
     MAIN_MENU_FONT_SIZE,
     render_text,
-    get_font_size,
 )
 
 # for test

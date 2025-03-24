@@ -4,10 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e9aa74d5-5a94-41b4-b2b6-1ab1cd7e9334" name="Changes" comment="switched to camelCase&#10;added type hint, new combination (Shift + Enter), rewrite setText, addText, eraseHighlightedText, highlightText,">
+    <list default="true" id="e9aa74d5-5a94-41b4-b2b6-1ab1cd7e9334" name="Changes" comment="fixed bug (now the lines are shifting correctly)">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/Ivan_tasks.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/CURRROCHKA.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/new_try.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scribble/temp.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/temp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/test_new_textbox_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/test_new_textbox_widget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/test_new_textbox_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/new_textbox_widget.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +64,8 @@
     &quot;Python tests.pytest in test_new_textbox_widget.py.executor&quot;: &quot;Run&quot;,
     &quot;Python.game.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.new_textbox_widget.executor&quot;: &quot;Run&quot;,
+    &quot;Python.new_try.executor&quot;: &quot;Run&quot;,
     &quot;Python.pygame_test.executor&quot;: &quot;Run&quot;,
     &quot;Python.server.executor&quot;: &quot;Run&quot;,
     &quot;Python.temp.executor&quot;: &quot;Run&quot;,
@@ -67,9 +75,11 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;com.codeium.enabled&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;creating__new__textbox__widget&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;F:/Projects/IvanTasks/Scribble&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   },
   &quot;keyToStringList&quot;: {
     &quot;ChangesTree.GroupingKeys&quot;: [
@@ -84,10 +94,11 @@
       <recent name="F:\Projects\IvanTasks\Scribble\client\images" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\Projects\IvanTasks\Scribble" />
       <recent name="F:\Projects\IvanTasks\Scribble\client\images" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test_new_textbox_widget">
+  <component name="RunManager" selected="Python.new_try">
     <configuration name="game" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IvanTasks" />
       <option name="ENV_FILES" value="" />
@@ -102,6 +113,51 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/client/game.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="new_textbox_widget" type="PythonConfigurationType" factoryName="Python">
+      <module name="IvanTasks" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.12 (IvanTasks)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/new_textbox_widget.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="new_try" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="IvanTasks" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scribble" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/new_try.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -177,29 +233,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test_new_textbox_widget" type="PythonConfigurationType" factoryName="Python">
-      <module name="IvanTasks" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.12 (IvanTasks)" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/test_new_textbox_widget.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="textbox" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IvanTasks" />
       <option name="ENV_FILES" value="" />
@@ -223,15 +256,17 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.new_textbox_widget" />
       <item itemvalue="Python.server" />
-      <item itemvalue="Python.test_new_textbox_widget" />
+      <item itemvalue="Python.new_try" />
       <item itemvalue="Python.game" />
+      <item itemvalue="Python.pygame_test" />
       <item itemvalue="Python.temp" />
       <item itemvalue="Python.textbox" />
-      <item itemvalue="Python.pygame_test" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.new_try" />
         <item itemvalue="Python.temp" />
         <item itemvalue="Python.textbox" />
         <item itemvalue="Python.pygame_test" />
@@ -395,7 +430,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736718469079</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="fixed bug (now the lines are shifting correctly)">
+      <option name="closed" value="true" />
+      <created>1737280216160</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1737280216160</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -437,6 +480,7 @@
     <MESSAGE value="the text in all lines is displayed correctly." />
     <MESSAGE value="The text is now copied and pasted into the system clipboard. Also, it's possible to highlight text on several lines" />
     <MESSAGE value="switched to camelCase&#10;added type hint, new combination (Shift + Enter), rewrite setText, addText, eraseHighlightedText, highlightText," />
-    <option name="LAST_COMMIT_MESSAGE" value="switched to camelCase&#10;added type hint, new combination (Shift + Enter), rewrite setText, addText, eraseHighlightedText, highlightText," />
+    <MESSAGE value="fixed bug (now the lines are shifting correctly)" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed bug (now the lines are shifting correctly)" />
   </component>
 </project>

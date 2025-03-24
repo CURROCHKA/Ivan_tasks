@@ -7,6 +7,8 @@ from pygame_widgets.mouse import Mouse, MouseState
 
 
 class MyTextBox(TextBox):
+    NEWLINE_CHAR = "\n"
+
     def __init__(
         self,
         win: pygame.Surface,
@@ -17,13 +19,32 @@ class MyTextBox(TextBox):
         isSubWidget=False,
         **kwargs
     ):
+        """
+        Initialize a text box widget.
+
+        Args:
+            win (pygame.Surface): The surface to render the text box on.
+            x (int): The x-coordinate of the top-left corner.
+            y (int): The y-coordinate of the top-left corner.
+            width (int): The width of the text box.
+            height (int): The height of the text box.
+            isSubWidget (bool, optional): Specifies if this is a sub-widget. Defaults to False.
+            **kwargs: Additional keyword arguments for customization.
+        """
         super().__init__(win, x, y, width, height, isSubWidget, **kwargs)
 
-        self.text = [[]]
+        self.tab_spaces = kwargs.get("tabSpaces", 4)
+        self.highlight_color = kwargs.get("highlightColor", (166, 210, 255))
 
-        self.selected_line = 0
+        self.text = [[]]  # Multi-line text storage
+        self.selected_line = 0  # Index of the currently selected line
 
-        # TODO highlight the text
+        self.highlighted_text = [[]]
+        # Highlight indexes
+        self.highlight_start_line = 0
+        self.highlight_end_line = 0
+        self.highlight_start_inline = 0
+        self.highlight_end_inline = 0
 
     def listen(self, events: list[pygame.event.Event]):
         """
@@ -50,12 +71,18 @@ class MyTextBox(TextBox):
                     self.cursorTime = time.time()
                     self.update_cursor_position(x, y)
 
+                    self.highlight_start_line = self.selected_line
+                    self.highlight_start_inline = self.cursorPosition
+
             elif mouseState == MouseState.DRAG:
                 if self.contains(x, y):
                     self.selected = True
                     self.showCursor = True
                     self.cursorTime = time.time()
                     self.update_cursor_position(x, y)
+
+                    self.highlight_end_line = self.selected_line
+                    self.highlight_end_inline = self.cursorPosition
 
                 else:
                     self.selected = False
@@ -72,11 +99,14 @@ class MyTextBox(TextBox):
                         self.repeatTime = time.time()
 
                         if event.key == pygame.K_BACKSPACE:
-                            if self.cursorPosition != 0:
+                            if not self.is_empty_highlighted_text():
+                                self.erase_highlighted_text()
+                                self.cursorPosition += 1
+                                self.onTextChanged(*self.onTextChangedParams)
+
+                            elif self.cursorPosition != 0:
                                 self.maxLengthReached = False
-                                self.text[self.selected_line].pop(
-                                    self.cursorPosition - 1
-                                )
+                                self.text[self.selected_line].pop(self.cursorPosition - 1)
                                 self.shift_lines()
                                 self.onTextChanged(*self.onTextChangedParams)
 
@@ -87,12 +117,17 @@ class MyTextBox(TextBox):
                                 self.cursorPosition = (
                                     len(self.text[self.selected_line]) + 1
                                 )
+                                self.shift_lines()
                                 self.onTextChanged(*self.onTextChangedParams)
 
                             self.cursorPosition = max(self.cursorPosition - 1, 0)
 
                         elif event.key == pygame.K_DELETE:
-                            if not self.cursorPosition >= len(
+                            if not self.is_empty_highlighted_text():
+                                self.erase_highlighted_text()
+                                self.onTextChanged(*self.onTextChangedParams)
+
+                            elif not self.cursorPosition >= len(
                                 self.text[self.selected_line]
                             ):
                                 self.maxLengthReached = False
@@ -134,6 +169,13 @@ class MyTextBox(TextBox):
 
                         elif event.key == pygame.K_END:
                             self.cursorPosition = len(self.text[self.selected_line])
+
+                        elif event.key == pygame.K_TAB:
+                            self.add_text(list(" " * self.tab_spaces))
+
+                        elif event.key == pygame.K_INSERT:
+                            # TODO add logic for insert. I don't really know what it do
+                            pass
 
                         elif event.key == pygame.K_ESCAPE:
                             if not self.escape:
@@ -301,6 +343,72 @@ class MyTextBox(TextBox):
             except IndexError:
                 self.cursorPosition -= 1
 
+    def draw_highlight(self) -> None:
+        """
+        Draw the highlighted text.
+
+        The highlighted text is the text between the `highlight_start_line` and
+        `highlight_end_line` attributes, inclusive. The text is drawn with the
+        `highlight_color` attribute.
+
+        :return: None
+        """
+
+        def draw_rect(line: int, start: int, end: int) -> None:
+            """
+            Draw a rectangle for a range of characters in a line.
+
+            This method is used to draw the highlighted text. It takes a line index,
+            a start character index and an end character index. It renders the text
+            between the start and end character index and draws a rectangle around
+            it using the `highlight_color` attribute.
+
+            :param line: The line index
+            :param start: The start character index
+            :param end: The end character index
+            :return: None
+            """
+            x = self.get_line_width(self.text[line])
+
+            for char_index in range(start, end):
+                char = self.text[line][char_index]
+                char_render = self.font.render(char, True, self.highlight_color)
+                rect = char_render.get_rect(
+                    bottomleft=(
+                        x[char_index],
+                        self._y + self.fontSize * (line + 1) + self.textOffsetBottom,
+                    )
+                )
+                pygame.draw.rect(self.win, self.highlight_color, rect)
+
+        start_line = min(self.highlight_start_line, self.highlight_end_line)
+        end_line = max(self.highlight_start_line, self.highlight_end_line)
+
+        start_inline = self.highlight_end_inline
+        end_inline = self.highlight_start_inline
+
+        if self.highlight_start_line < self.highlight_end_line:
+            start_inline = self.highlight_start_inline
+            end_inline = self.highlight_end_inline
+
+        if start_line == end_line:
+            start_inline = min(self.highlight_start_inline, self.highlight_end_inline)
+            end_inline = max(self.highlight_start_inline, self.highlight_end_inline)
+
+            draw_rect(start_line, start_inline, end_inline)
+            self.highlighted_text = [self.text[start_line][start_inline:end_inline]]
+
+        else:
+            draw_rect(start_line, start_inline, len(self.text[start_line]))
+            self.highlighted_text = [self.text[start_line][start_inline:]]
+
+            for line_index in range(start_line + 1, end_line):
+                draw_rect(line_index, 0, len(self.text[line_index]))
+                self.highlighted_text += [self.text[line_index]]
+
+            draw_rect(end_line, 0, end_inline)
+            self.highlighted_text += [self.text[end_line][:end_inline]]
+
     def draw(self):
         """Display to surface"""
         if not self._hidden:
@@ -308,8 +416,47 @@ class MyTextBox(TextBox):
                 self.updateCursor()
             self.draw_border()
             self.draw_background()
+            self.draw_highlight()
             self.draw_text()
             self.draw_cursor()
+
+    def is_empty_highlighted_text(self):
+        return all(len(line) == 0 for line in self.highlighted_text)
+
+    def erase_highlighted_text(self):
+        start_line = min(self.highlight_start_line, self.highlight_end_line)
+        end_line = max(self.highlight_start_line, self.highlight_end_line)
+
+        start_inline = self.highlight_end_inline
+        end_inline = self.highlight_start_inline
+
+        if self.highlight_start_line < self.highlight_end_line:
+            start_inline = self.highlight_start_inline
+            end_inline = self.highlight_end_inline
+
+        if start_line == end_line:
+            start_inline = min(
+                self.highlight_start_inline,
+                self.highlight_end_inline,
+            )
+            end_inline = max(
+                self.highlight_start_inline,
+                self.highlight_end_inline,
+            )
+
+            del self.text[start_line][start_inline:end_inline]
+        else:
+            del self.text[start_line][start_inline:]
+            del self.text[end_line][:end_inline]
+            del self.text[start_line + 1 : end_line]
+
+        self.selected_line = start_line
+        self.cursorPosition = start_inline
+        self.shift_lines()
+
+        self.highlight_start_line = self.highlight_end_line = 0
+        self.highlight_start_inline = self.highlight_end_inline = 0
+        self.highlighted_text = [[]]
 
     def update_cursor_position(self, x: float, y: float) -> None:
         """
@@ -359,6 +506,9 @@ class MyTextBox(TextBox):
         """
         for char in text:
             if len(char) > 0:
+                if not self.is_empty_highlighted_text():
+                    self.erase_highlighted_text()
+
                 try:
                     self.text[self.selected_line].insert(self.cursorPosition, char)
 
@@ -504,6 +654,5 @@ if __name__ == "__main__":
                 quit()
 
         win.fill((255, 255, 255))
-
         pygame_widgets.update(events)
         pygame.display.update()

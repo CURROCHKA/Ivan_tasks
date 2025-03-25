@@ -246,7 +246,7 @@ class MyTextBox(TextBox):
             self.first_visible_line_index -= 1
 
     def _insert_newline(self):
-        new_line = self.text[self.selected_line][self.cursorPosition:]
+        new_line = self.text[self.selected_line][self.cursorPosition :]
         self.text[self.selected_line] = self.text[self.selected_line][
             : self.cursorPosition
         ]
@@ -379,7 +379,10 @@ class MyTextBox(TextBox):
         inline_start, inline_end = self._get_valid_highlight_in_line_indexes()
 
         if self.highlight_line_start < self.highlight_line_end:
-            inline_start, inline_end = self.highlight_in_line_start, self.highlight_in_line_end
+            inline_start, inline_end = (
+                self.highlight_in_line_start,
+                self.highlight_in_line_end,
+            )
 
         if line_start == line_end:
             highlighted_rects = self._get_highlighted_rect(
@@ -549,7 +552,7 @@ class MyTextBox(TextBox):
 
             del self.text[line_start][inline_start:]
             del self.text[line_end][:inline_end]
-            del self.text[line_start + 1: line_end]
+            del self.text[line_start + 1 : line_end]
 
             try:
                 if not self.text[line_start]:
@@ -587,7 +590,7 @@ class MyTextBox(TextBox):
                 )
 
             self.highlighted_text = [self.text[line_start][inline_start:]]
-            self.highlighted_text += self.text[line_start + 1: line_end]
+            self.highlighted_text += self.text[line_start + 1 : line_end]
             self.highlighted_text += [self.text[line_end][:inline_end]]
 
     def _reset_highlight(self) -> None:
@@ -597,7 +600,9 @@ class MyTextBox(TextBox):
 
     def _shift_lines(self) -> None:
         shift = 0
-        for line in range(self.selected_line - self.first_visible_line_index, len(self.text) - 1):
+        for line in range(
+            self.selected_line - self.first_visible_line_index, len(self.text) - 1
+        ):
             if len(self.text[line - shift]) == 0:
                 del self.text[line - shift]
                 shift += 1
@@ -609,29 +614,6 @@ class MyTextBox(TextBox):
                 ):
                     self.text[line - shift].append(self.text[line + 1 - shift][0])
                     del self.text[line + 1 - shift][0]
-
-        # if (
-        #         len(self.text[self.selected_line]) > 0
-        #         and self.text[self.selected_line][-1] == self.NEWLINE_CHAR
-        # ):
-        #     return
-        #
-        # flag = False
-        # for line_index in range(self.selected_line, len(self.text) - 1):
-        #     while len(self.text[self.selected_line]) < self.max_line_length:
-        #         if not self._is_empty_2D_sequence(self.text[line_index + 1]):
-        #             char = self.text[line_index + 1][0]
-        #
-        #             self._insert_char(line_index, len(self.text[line_index]), char)
-        #
-        #             del self.text[line_index + 1][0]
-        #
-        #         else:
-        #             del self.text[line_index + 1]
-        #             flag = True
-        #             break
-        #         if flag:
-        #             break
 
     def _insert_char(self, line_index: int, inline_index: int, char: str) -> None:
         try:

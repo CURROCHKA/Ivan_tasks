@@ -13,8 +13,3 @@
 #                 print("Pressed: Ctrl + A")
 #
 # pygame.quit()
-
-l = [[0] * 10 for _ in range(10)]
-print(l)
-del l[0][1:4]
-print(l)

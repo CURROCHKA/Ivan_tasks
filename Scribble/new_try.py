@@ -1,6 +1,7 @@
 import pygame
 import pygame_widgets
 import time
+import pyperclip
 
 from pygame_widgets.textbox import TextBox
 from pygame_widgets.mouse import Mouse, MouseState
@@ -35,6 +36,7 @@ class MyTextBox(TextBox):
 
         self.tab_spaces = kwargs.get("tabSpaces", 4)
         self.highlight_color = kwargs.get("highlightColor", (166, 210, 255))
+        self.cursor_width = kwargs.get("cursorWidth", 2)
 
         self.text = [[]]  # Multi-line text storage
         self.selected_line = 0  # Index of the currently selected line
@@ -47,15 +49,6 @@ class MyTextBox(TextBox):
         self.highlight_end_inline = 0
 
     def listen(self, events: list[pygame.event.Event]):
-        """
-        Listen to events.
-
-        This method is used to listen to pygame events and update the state
-        of the text box accordingly.
-
-        Args:
-            events (list[pygame.event.Event]): The list of pygame events to listen to
-        """
         if not self._hidden and not self._disabled:
             if self.keyDown:
                 self.updateRepeatKey()
@@ -73,6 +66,11 @@ class MyTextBox(TextBox):
 
                     self.highlight_start_line = self.selected_line
                     self.highlight_start_inline = self.cursorPosition
+                else:
+                    self.selected = False
+                    self.showCursor = False
+                    self.cursorTime = time.time()
+                    self.reset_highlight()
 
             elif mouseState == MouseState.DRAG:
                 if self.contains(x, y):
@@ -83,11 +81,6 @@ class MyTextBox(TextBox):
 
                     self.highlight_end_line = self.selected_line
                     self.highlight_end_inline = self.cursorPosition
-
-                else:
-                    self.selected = False
-                    self.showCursor = False
-                    self.cursorTime = time.time()
 
             # Keyboard Input
             if self.selected:
@@ -106,18 +99,29 @@ class MyTextBox(TextBox):
 
                             elif self.cursorPosition != 0:
                                 self.maxLengthReached = False
-                                self.text[self.selected_line].pop(self.cursorPosition - 1)
+                                self.text[self.selected_line].pop(
+                                    self.cursorPosition - 1
+                                )
                                 self.shift_lines()
                                 self.onTextChanged(*self.onTextChangedParams)
 
                             elif self.cursorPosition == 0 and self.selected_line != 0:
                                 if len(self.text[self.selected_line]) == 0:
                                     self.text.pop(self.selected_line)
-                                self.selected_line -= 1
-                                self.cursorPosition = (
-                                    len(self.text[self.selected_line]) + 1
-                                )
-                                self.shift_lines()
+                                    self.selected_line -= 1
+                                    self.cursorPosition = len(
+                                        self.text[self.selected_line]
+                                    )
+                                else:
+                                    self.selected_line -= 1
+                                    self.cursorPosition = len(
+                                        self.text[self.selected_line]
+                                    )
+                                    self.text[self.selected_line].pop(
+                                        self.cursorPosition - 1
+                                    )
+                                    self.shift_lines()
+
                                 self.onTextChanged(*self.onTextChangedParams)
 
                             self.cursorPosition = max(self.cursorPosition - 1, 0)
@@ -127,7 +131,7 @@ class MyTextBox(TextBox):
                                 self.erase_highlighted_text()
                                 self.onTextChanged(*self.onTextChangedParams)
 
-                            elif not self.cursorPosition >= len(
+                            elif self.cursorPosition < len(
                                 self.text[self.selected_line]
                             ):
                                 self.maxLengthReached = False
@@ -144,38 +148,96 @@ class MyTextBox(TextBox):
                                 )
                                 self.onTextChanged(*self.onTextChangedParams)
 
+                            elif self.cursorPosition == len(
+                                self.text[self.selected_line]
+                            ):
+                                try:
+                                    if self.text[self.selected_line + 1]:
+                                        self.text[self.selected_line + 1].pop(0)
+                                        self.shift_lines()
+                                        self.onTextChanged(*self.onTextChangedParams)
+                                    else:
+                                        self.text.pop(self.selected_line + 1)
+                                except IndexError:
+                                    pass
+
                         elif event.key == pygame.K_RETURN:
-                            self.onSubmit(*self.onSubmitParams)
+                            if event.mod & pygame.KMOD_SHIFT:
+                                pass
+                                # TODO ctrl + enter for new line.
+                            else:
+                                self.onSubmit(*self.onSubmitParams)
 
                         elif event.key == pygame.K_UP:
+                            self.reset_highlight()
                             self.selected_line = max(self.selected_line - 1, 0)
+                            self.cursorPosition = min(
+                                self.cursorPosition,
+                                len(self.text[self.selected_line]) - 1,
+                            )
 
                         elif event.key == pygame.K_DOWN:
+                            self.reset_highlight()
                             self.selected_line = min(
                                 self.selected_line + 1, len(self.text) - 1
                             )
+                            self.cursorPosition = min(
+                                self.cursorPosition,
+                                len(self.text[self.selected_line]),
+                            )
 
                         elif event.key == pygame.K_RIGHT:
+                            self.reset_highlight()
                             self.cursorPosition = min(
                                 self.cursorPosition + 1,
                                 len(self.text[self.selected_line]),
                             )
 
                         elif event.key == pygame.K_LEFT:
+                            self.reset_highlight()
                             self.cursorPosition = max(self.cursorPosition - 1, 0)
 
                         elif event.key == pygame.K_HOME:
+                            self.reset_highlight()
                             self.cursorPosition = 0
 
                         elif event.key == pygame.K_END:
+                            self.reset_highlight()
                             self.cursorPosition = len(self.text[self.selected_line])
 
                         elif event.key == pygame.K_TAB:
                             self.add_text(list(" " * self.tab_spaces))
 
                         elif event.key == pygame.K_INSERT:
-                            # TODO add logic for insert. I don't really know what it do
+                            # TODO add logic for insert. I don't really know what it do (Trash)
                             pass
+
+                        elif event.key == pygame.K_a and event.mod & pygame.KMOD_CTRL:
+                            self.highlight_start_line = 0
+                            self.highlight_end_line = len(self.text) - 1
+                            self.highlight_start_inline = 0
+                            self.highlight_end_inline = len(
+                                self.text[-1]
+                            )
+
+                        elif (
+                            event.key == pygame.K_c
+                            and event.mod & pygame.KMOD_CTRL
+                            and not self.is_empty_highlighted_text()
+                        ):
+                            pyperclip.copy(self.get_highlighted_text())
+
+                        elif event.key == pygame.K_v and event.mod & pygame.KMOD_CTRL:
+                            text = list(pyperclip.paste())
+                            self.add_text(text)
+
+                        elif (
+                            event.key == pygame.K_x
+                            and event.mod & pygame.KMOD_CTRL
+                            and not self.is_empty_highlighted_text()
+                        ):
+                            pyperclip.copy(self.get_highlighted_text())
+                            self.erase_highlighted_text()
 
                         elif event.key == pygame.K_ESCAPE:
                             if not self.escape:
@@ -185,6 +247,7 @@ class MyTextBox(TextBox):
                                 self.repeatKey = None
                                 self.keyDown = None
                                 self.firstRepeat = True
+                                self.reset_highlight()
 
                         elif not self.maxLengthReached:
                             self.add_text([event.unicode])
@@ -196,12 +259,6 @@ class MyTextBox(TextBox):
                         self.escape = False
 
     def draw_border(self):
-        """Draw the border of the text box.
-
-        This method draws the border of the text box, which is the outline
-        of the main body of the text box. It is drawn as a combination of
-        rectangles and circles to create a rounded corner effect.
-        """
         borderRects = [
             (
                 self._x + self.radius,
@@ -231,12 +288,6 @@ class MyTextBox(TextBox):
             pygame.draw.circle(self.win, self.borderColour, circle, self.radius)
 
     def draw_background(self):
-        """Draw the background of the text box.
-
-        This method draws the main body of the text box, which is the area
-        where the text is displayed. It is drawn as a rectangle with rounded
-        corners.
-        """
         backgroundRects = [
             (
                 self._x + self.borderThickness + self.radius,
@@ -278,14 +329,6 @@ class MyTextBox(TextBox):
             pygame.draw.circle(self.win, self.colour, circle, self.radius)
 
     def draw_text(self):
-        """
-        Draw the text in the text box.
-
-        This method will either draw the text in the text box or the placeholder text,
-        depending on whether the text box is empty or not. The text is drawn line by line,
-        with each character being rendered as a separate surface. The position of the
-        text is determined by the `textOffsetLeft` and `textOffsetBottom` attributes.
-        """
         if any(len(line) > 0 for line in self.text):
             text = self.text
             color = self.textColour
@@ -314,12 +357,7 @@ class MyTextBox(TextBox):
                 x.append(x[-1] + char_render.get_width())
 
     def draw_cursor(self):
-        """
-        Draw the cursor
-        The position of the cursor is determined by the `cursorPosition` attribute.
-        The cursor is only displayed if the `showCursor` attribute is True.
-        """
-        x = self.get_line_width(self.text[self.selected_line])
+        x = self.get_line_width(self.selected_line)
 
         if self.showCursor:
             try:
@@ -338,37 +376,14 @@ class MyTextBox(TextBox):
                         + self.fontSize * (self.selected_line + 1)
                         + self.textOffsetBottom,
                     ),
-                    width=2,
+                    width=self.cursor_width,
                 )
             except IndexError:
                 self.cursorPosition -= 1
 
     def draw_highlight(self) -> None:
-        """
-        Draw the highlighted text.
-
-        The highlighted text is the text between the `highlight_start_line` and
-        `highlight_end_line` attributes, inclusive. The text is drawn with the
-        `highlight_color` attribute.
-
-        :return: None
-        """
-
         def draw_rect(line: int, start: int, end: int) -> None:
-            """
-            Draw a rectangle for a range of characters in a line.
-
-            This method is used to draw the highlighted text. It takes a line index,
-            a start character index and an end character index. It renders the text
-            between the start and end character index and draws a rectangle around
-            it using the `highlight_color` attribute.
-
-            :param line: The line index
-            :param start: The start character index
-            :param end: The end character index
-            :return: None
-            """
-            x = self.get_line_width(self.text[line])
+            x = self.get_line_width(line)
 
             for char_index in range(start, end):
                 char = self.text[line][char_index]
@@ -420,10 +435,52 @@ class MyTextBox(TextBox):
             self.draw_text()
             self.draw_cursor()
 
-    def is_empty_highlighted_text(self):
+    def updateRepeatKey(self):
+        now = time.time()
+
+        if self.firstRepeat:
+            if now - self.repeatTime >= self.REPEAT_DELAY / 1000:
+                self.firstRepeat = False
+                self.repeatTime = now
+                pygame.event.post(
+                    pygame.event.Event(
+                        pygame.KEYDOWN,
+                        {
+                            "key": self.repeatKey.key,
+                            "unicode": self.repeatKey.unicode,
+                            "mod": self.repeatKey.mod,
+                        },
+                    )
+                )
+
+        elif now - self.repeatTime >= self.REPEAT_INTERVAL / 1000:
+            self.repeatTime = now
+            pygame.event.post(
+                pygame.event.Event(
+                    pygame.KEYDOWN,
+                    {
+                        "key": self.repeatKey.key,
+                        "unicode": self.repeatKey.unicode,
+                        "mod": self.repeatKey.mod,
+                    },
+                )
+            )
+
+    def skip_special_char(self):
+        if self.text[self.selected_line]:
+            while self.cursorPosition > 0 and self.is_special_char(
+                self.text[self.selected_line][self.cursorPosition - 1]
+            ):
+                self.cursorPosition = max(0, self.cursorPosition - 1)
+
+    @staticmethod
+    def is_special_char(char: str) -> bool:
+        return ord(char) < 32 or ord(char) == 127
+
+    def is_empty_highlighted_text(self) -> bool:
         return all(len(line) == 0 for line in self.highlighted_text)
 
-    def erase_highlighted_text(self):
+    def erase_highlighted_text(self) -> None:
         start_line = min(self.highlight_start_line, self.highlight_end_line)
         end_line = max(self.highlight_start_line, self.highlight_end_line)
 
@@ -448,27 +505,20 @@ class MyTextBox(TextBox):
         else:
             del self.text[start_line][start_inline:]
             del self.text[end_line][:end_inline]
-            del self.text[start_line + 1 : end_line]
+            del self.text[start_line + 1: end_line]
 
         self.selected_line = start_line
         self.cursorPosition = start_inline
         self.shift_lines()
 
+        self.reset_highlight()
+
+    def reset_highlight(self) -> None:
         self.highlight_start_line = self.highlight_end_line = 0
         self.highlight_start_inline = self.highlight_end_inline = 0
         self.highlighted_text = [[]]
 
     def update_cursor_position(self, x: float, y: float) -> None:
-        """
-        Update the cursor position based on the given mouse coordinates
-
-        This method will update the `selected_line` and `cursorPosition` attributes
-        based on the given mouse coordinates.
-
-        Args:
-            x (float): The x-coordinate of the mouse
-            y (float): The y-coordinate of the mouse
-        """
         _y = [self._y + self.textOffsetBottom]
 
         for i, line in enumerate(self.text):
@@ -477,22 +527,23 @@ class MyTextBox(TextBox):
                 break
             _y.append(_y[-1] + self.fontSize)
 
-        _x = [self._x + self.textOffsetLeft]
+        _x = self.get_line_width(self.selected_line)
 
-        for i, char in enumerate(self.text[self.selected_line]):
-            char_render = self.font.render(char, True, self.textColour)
+        for char_index in range(len(self.text[self.selected_line]) - 1):
             if (
-                _x[-1] - char_render.get_width() / 2
+                _x[char_index] + (_x[char_index + 1] - _x[char_index]) / 2
                 <= x
-                <= _x[-1] + 3 * char_render.get_width() / 2
+                <= _x[char_index + 1] + (_x[char_index + 2] - _x[char_index + 1]) / 2
             ):
-                self.cursorPosition = i
-            _x.append(_x[-1] + char_render.get_width())
+                self.cursorPosition = char_index + 1
 
-        if len(_x) >= 2 and x >= _x[-1] - (_x[-1] - _x[-2]) / 2:
+        if len(_x) >= 2 and x <= _x[0] + (_x[1] - _x[0]) / 2:
+            self.cursorPosition = 0
+
+        elif len(_x) >= 2 and x >= _x[-1] - (_x[-1] - _x[-2]) / 2:
             self.cursorPosition = len(self.text[self.selected_line])
 
-    def add_text(self, text: list[str]):
+    def add_text(self, text: list[str]) -> None:
         """
         Add text to the text box
 
@@ -509,25 +560,23 @@ class MyTextBox(TextBox):
                 if not self.is_empty_highlighted_text():
                     self.erase_highlighted_text()
 
+                if self.is_special_char(char):
+                    continue
+
                 try:
                     self.text[self.selected_line].insert(self.cursorPosition, char)
 
                 except IndexError:
-                    self.text.append([event.unicode])
+                    self.text.append([char])
 
                 for line_index in range(self.selected_line, len(self.text)):
-                    x = [self._x + self.textOffsetLeft]
+                    x = self.get_line_width(line_index)
 
-                    for char1 in self.text[line_index]:
-                        char_render = self.font.render(
-                            char1,
-                            True,
-                            self.colour,
-                        )
-
-                        x.append(x[-1] + char_render.get_width())
-
-                        if x[-1] > self._x + self._width - self.textOffsetRight:
+                    for char_index in range(len(self.text[line_index])):
+                        if (
+                            x[char_index]
+                            >= self._x + self._width - self.textOffsetRight
+                        ):
                             try:
                                 self.text[line_index + 1].insert(
                                     0, self.text[line_index].pop()
@@ -544,7 +593,7 @@ class MyTextBox(TextBox):
                 self.cursorPosition += 1
                 self.onTextChanged(*self.onTextChangedParams)
 
-    def get_line_width(self, line: list[str]) -> list[float]:
+    def get_line_width(self, line: int) -> list[float]:
         """
         Get the width of a line of text in the text box
 
@@ -558,8 +607,7 @@ class MyTextBox(TextBox):
             list[float]: A list of the x-coordinates of the end of each character in the line
         """
         x = [self._x + self.textOffsetLeft]
-
-        for char in line:
+        for char in self.text[line]:
             char_render = self.font.render(
                 char,
                 True,
@@ -569,53 +617,37 @@ class MyTextBox(TextBox):
         return x
 
     def shift_lines(self) -> None:
-        """
-        Shift lines when a line is deleted
-
-        When a line is deleted, this method will shift all the lines below it up one line.
-        """
         shift = 0
         for line in range(
             self.selected_line,
             len(self.text) - 1,
         ):
             if len(self.text[line - shift]) == 0:
-                del self.text[line - shift]
+                self.text.pop(line - shift)
                 shift += 1
                 continue
 
-            x = self.get_line_width(self.text[line - shift])
-
-            while (
-                x[-1] <= self._x + self._width - self.textOffsetRight
-                and len(self.text[line + 1 - shift]) > 0
-            ):
-                self.text[line - shift].append(self.text[line + 1 - shift].pop(0))
-                x = self.get_line_width(self.text[line - shift])
+            x = self.get_line_width(line - shift)
+            if self.text[line - shift][-1] != self.NEWLINE_CHAR:
+                while (
+                    x[-1] <= self._x + self._width - self.textOffsetRight
+                    and len(self.text[line + 1 - shift]) > 0
+                ):
+                    self.text[line - shift].append(self.text[line + 1 - shift].pop(0))
+                    x = self.get_line_width(line - shift)
+        if len(self.text) != 1 and not self.text[-1]:
+            self.text.pop()
 
     def setText(self, text: str) -> None:
-        """
-        Set the text of the text box.
-
-        This method resets the text box to a single line of text and sets the cursor position to the start.
-
-        Args:
-            text (str): The text to set in the text box.
-        """
         self.text = [[]]
         self.selected_line = 0
         self.cursorPosition = 0
         self.add_text(list(text))
 
+    def get_highlighted_text(self) -> str:
+        return "".join("".join(line) for line in self.highlighted_text)
+
     def getText(self) -> str:
-        """
-        Retrieve the complete text from the text box.
-
-        This method concatenates all lines of text in the text box into a single string and returns it.
-
-        Returns:
-            str: The complete text from the text box.
-        """
         return "".join("".join(line) for line in self.text)
 
 
@@ -627,10 +659,10 @@ if __name__ == "__main__":
         textbox.setText("")
 
     pygame.init()
-    win = pygame.display.set_mode((1000, 600))
+    window = pygame.display.set_mode((1000, 600))
 
     textbox = MyTextBox(
-        win,
+        window,
         100,
         100,
         800,
@@ -646,13 +678,13 @@ if __name__ == "__main__":
 
     run = True
     while run:
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
+        outer_events = pygame.event.get()
+        for outer_event in outer_events:
+            if outer_event.type == pygame.QUIT:
                 pygame.quit()
                 run = False
                 quit()
 
-        win.fill((255, 255, 255))
-        pygame_widgets.update(events)
+        window.fill((255, 255, 255))
+        pygame_widgets.update(outer_events)
         pygame.display.update()

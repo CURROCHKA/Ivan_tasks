@@ -8,8 +8,6 @@ from pygame_widgets.mouse import Mouse, MouseState
 
 
 class MyTextBox(TextBox):
-    NEWLINE_CHAR = "\n"
-
     def __init__(
         self,
         win: pygame.Surface,
@@ -99,9 +97,7 @@ class MyTextBox(TextBox):
 
                             elif self.cursorPosition != 0:
                                 self.maxLengthReached = False
-                                self.text[self.selected_line].pop(
-                                    self.cursorPosition - 1
-                                )
+                                self.text[self.selected_line].pop(self.cursorPosition - 1)
                                 self.shift_lines()
                                 self.onTextChanged(*self.onTextChangedParams)
 
@@ -109,17 +105,20 @@ class MyTextBox(TextBox):
                                 if len(self.text[self.selected_line]) == 0:
                                     self.text.pop(self.selected_line)
                                     self.selected_line -= 1
-                                    self.cursorPosition = len(
-                                        self.text[self.selected_line]
-                                    )
+                                    self.cursorPosition = len(self.text[self.selected_line])
                                 else:
                                     self.selected_line -= 1
-                                    self.cursorPosition = len(
-                                        self.text[self.selected_line]
-                                    )
-                                    self.text[self.selected_line].pop(
-                                        self.cursorPosition - 1
-                                    )
+                                    self.cursorPosition = len(self.text[self.selected_line])
+                                    if self.text[self.selected_line][-1] == "\n":
+                                        self.text[self.selected_line].pop(
+                                            self.cursorPosition - 1
+                                        )  # delete the \n
+                                        self.cursorPosition -= 1
+                                        self.text[self.selected_line].pop(
+                                            self.cursorPosition - 1
+                                        )  # delete the \r
+                                    else:
+                                        self.text[self.selected_line].pop(self.cursorPosition - 1)
                                     self.shift_lines()
 
                                 self.onTextChanged(*self.onTextChangedParams)
@@ -133,27 +132,40 @@ class MyTextBox(TextBox):
 
                             elif self.cursorPosition < len(
                                 self.text[self.selected_line]
-                            ):
+                            ) - self.get_count_spec_chars(self.selected_line):
                                 self.maxLengthReached = False
                                 self.text[self.selected_line].pop(self.cursorPosition)
                                 self.shift_lines()
                                 self.onTextChanged(*self.onTextChangedParams)
 
                             elif self.cursorPosition == 0 and self.selected_line != 0:
-                                if len(self.text[self.selected_line]) == 0:
+                                if (
+                                    len(self.text[self.selected_line]) == 0
+                                    or self.text[self.selected_line][-1] == "\n"
+                                ):
                                     self.text.pop(self.selected_line)
                                 self.selected_line -= 1
-                                self.cursorPosition = (
-                                    len(self.text[self.selected_line]) + 1
-                                )
+                                self.cursorPosition = len(self.text[self.selected_line]) + 1
                                 self.onTextChanged(*self.onTextChangedParams)
 
                             elif self.cursorPosition == len(
                                 self.text[self.selected_line]
-                            ):
+                            ) - self.get_count_spec_chars(self.selected_line):
                                 try:
+
                                     if self.text[self.selected_line + 1]:
-                                        self.text[self.selected_line + 1].pop(0)
+                                        if (
+                                            self.text[self.selected_line][self.cursorPosition]
+                                            == "\r"
+                                        ):
+                                            self.text[self.selected_line].pop(
+                                                self.cursorPosition
+                                            )  # delete the \r
+                                            self.text[self.selected_line].pop(
+                                                self.cursorPosition
+                                            )  # delete the \n
+                                        else:
+                                            self.text[self.selected_line + 1].pop(0)
                                         self.shift_lines()
                                         self.onTextChanged(*self.onTextChangedParams)
                                     else:
@@ -163,8 +175,12 @@ class MyTextBox(TextBox):
 
                         elif event.key == pygame.K_RETURN:
                             if event.mod & pygame.KMOD_SHIFT:
-                                pass
-                                # TODO ctrl + enter for new line.
+                                newline_text = self.text[self.selected_line][self.cursorPosition :]
+                                del self.text[self.selected_line][self.cursorPosition :]
+                                self.text[self.selected_line].extend("\r\n")
+                                self.selected_line += 1
+                                self.text.insert(self.selected_line, newline_text)
+                                self.cursorPosition = 0
                             else:
                                 self.onSubmit(*self.onSubmitParams)
 
@@ -178,9 +194,7 @@ class MyTextBox(TextBox):
 
                         elif event.key == pygame.K_DOWN:
                             self.reset_highlight()
-                            self.selected_line = min(
-                                self.selected_line + 1, len(self.text) - 1
-                            )
+                            self.selected_line = min(self.selected_line + 1, len(self.text) - 1)
                             self.cursorPosition = min(
                                 self.cursorPosition,
                                 len(self.text[self.selected_line]),
@@ -206,7 +220,7 @@ class MyTextBox(TextBox):
                             self.cursorPosition = len(self.text[self.selected_line])
 
                         elif event.key == pygame.K_TAB:
-                            self.add_text(list(" " * self.tab_spaces))
+                            self.add_text(" " * self.tab_spaces)
 
                         elif event.key == pygame.K_INSERT:
                             # TODO add logic for insert. I don't really know what it do (Trash)
@@ -216,9 +230,7 @@ class MyTextBox(TextBox):
                             self.highlight_start_line = 0
                             self.highlight_end_line = len(self.text) - 1
                             self.highlight_start_inline = 0
-                            self.highlight_end_inline = len(
-                                self.text[-1]
-                            )
+                            self.highlight_end_inline = len(self.text[-1])
 
                         elif (
                             event.key == pygame.K_c
@@ -228,7 +240,7 @@ class MyTextBox(TextBox):
                             pyperclip.copy(self.get_highlighted_text())
 
                         elif event.key == pygame.K_v and event.mod & pygame.KMOD_CTRL:
-                            text = list(pyperclip.paste())
+                            text = pyperclip.paste()
                             self.add_text(text)
 
                         elif (
@@ -250,7 +262,7 @@ class MyTextBox(TextBox):
                                 self.reset_highlight()
 
                         elif not self.maxLengthReached:
-                            self.add_text([event.unicode])
+                            self.add_text(event.unicode)
 
                     elif event.type == pygame.KEYUP:
                         self.repeatKey = None
@@ -339,6 +351,8 @@ class MyTextBox(TextBox):
         for line_index, line in enumerate(text):
             x = [self._x + self.textOffsetLeft]
             for char in line:
+                if self.is_special_char(char):
+                    continue
                 char_render = self.font.render(
                     char,
                     True,
@@ -347,9 +361,7 @@ class MyTextBox(TextBox):
                 textRect = char_render.get_rect(
                     bottomleft=(
                         x[-1],
-                        self._y
-                        + self.fontSize * (line_index + 1)
-                        + self.textOffsetBottom,
+                        self._y + self.fontSize * (line_index + 1) + self.textOffsetBottom,
                     )
                 )
 
@@ -366,15 +378,11 @@ class MyTextBox(TextBox):
                     self.cursorColour,
                     (
                         x[self.cursorPosition],
-                        self._y
-                        + self.textOffsetBottom
-                        + self.fontSize * self.selected_line,
+                        self._y + self.textOffsetBottom + self.fontSize * self.selected_line,
                     ),
                     (
                         x[self.cursorPosition],
-                        self._y
-                        + self.fontSize * (self.selected_line + 1)
-                        + self.textOffsetBottom,
+                        self._y + self.fontSize * (self.selected_line + 1) + self.textOffsetBottom,
                     ),
                     width=self.cursor_width,
                 )
@@ -383,14 +391,17 @@ class MyTextBox(TextBox):
 
     def draw_highlight(self) -> None:
         def draw_rect(line: int, start: int, end: int) -> None:
+            shift = 0
             x = self.get_line_width(line)
-
             for char_index in range(start, end):
                 char = self.text[line][char_index]
+                if self.is_special_char(char):
+                    char = " "
+                    shift += 1
                 char_render = self.font.render(char, True, self.highlight_color)
                 rect = char_render.get_rect(
                     bottomleft=(
-                        x[char_index],
+                        x[char_index - shift],
                         self._y + self.fontSize * (line + 1) + self.textOffsetBottom,
                     )
                 )
@@ -399,12 +410,12 @@ class MyTextBox(TextBox):
         start_line = min(self.highlight_start_line, self.highlight_end_line)
         end_line = max(self.highlight_start_line, self.highlight_end_line)
 
-        start_inline = self.highlight_end_inline
-        end_inline = self.highlight_start_inline
+        start_inline = self.highlight_start_inline
+        end_inline = self.highlight_end_inline
 
-        if self.highlight_start_line < self.highlight_end_line:
-            start_inline = self.highlight_start_inline
-            end_inline = self.highlight_end_inline
+        if self.highlight_start_line > self.highlight_end_line:
+            start_inline = self.highlight_end_inline
+            end_inline = self.highlight_start_inline
 
         if start_line == end_line:
             start_inline = min(self.highlight_start_inline, self.highlight_end_inline)
@@ -505,7 +516,7 @@ class MyTextBox(TextBox):
         else:
             del self.text[start_line][start_inline:]
             del self.text[end_line][:end_inline]
-            del self.text[start_line + 1: end_line]
+            del self.text[start_line + 1 : end_line]
 
         self.selected_line = start_line
         self.cursorPosition = start_inline
@@ -524,26 +535,26 @@ class MyTextBox(TextBox):
         for i, line in enumerate(self.text):
             if _y[-1] <= y <= _y[-1] + self.fontSize:
                 self.selected_line = i
-                break
+
             _y.append(_y[-1] + self.fontSize)
 
         _x = self.get_line_width(self.selected_line)
+        count_spec_chars = self.get_count_spec_chars(self.selected_line)
 
-        for char_index in range(len(self.text[self.selected_line]) - 1):
+        for char_index in range(len(self.text[self.selected_line]) - 1 - count_spec_chars):
             if (
                 _x[char_index] + (_x[char_index + 1] - _x[char_index]) / 2
                 <= x
                 <= _x[char_index + 1] + (_x[char_index + 2] - _x[char_index + 1]) / 2
             ):
                 self.cursorPosition = char_index + 1
-
         if len(_x) >= 2 and x <= _x[0] + (_x[1] - _x[0]) / 2:
             self.cursorPosition = 0
 
-        elif len(_x) >= 2 and x >= _x[-1] - (_x[-1] - _x[-2]) / 2:
-            self.cursorPosition = len(self.text[self.selected_line])
+        elif len(_x) >= 2 and x >= _x[-1] - (_x[-1] - _x[-2]) / 2 or len(_x) == 1:
+            self.cursorPosition = len(self.text[self.selected_line]) - count_spec_chars
 
-    def add_text(self, text: list[str]) -> None:
+    def add_text(self, text: str) -> None:
         """
         Add text to the text box
 
@@ -555,36 +566,41 @@ class MyTextBox(TextBox):
         Args:
             text (list[str]): The text to add to the text box
         """
+        text = list(text.replace("\t", " " * self.tab_spaces))
+
         for char in text:
             if len(char) > 0:
                 if not self.is_empty_highlighted_text():
                     self.erase_highlighted_text()
 
-                if self.is_special_char(char):
+                if self.is_special_char(char) and char != "\n":
                     continue
 
                 try:
-                    self.text[self.selected_line].insert(self.cursorPosition, char)
+                    if char == "\n":
+                        self.text[self.selected_line].extend("\r\n")
+                    else:
+                        self.text[self.selected_line].insert(self.cursorPosition, char)
 
                 except IndexError:
                     self.text.append([char])
 
+                if char == "\n":
+                    self.text.insert(self.selected_line + 1, [])
+                    self.selected_line += 1
+                    self.cursorPosition = 0
+
                 for line_index in range(self.selected_line, len(self.text)):
                     x = self.get_line_width(line_index)
 
-                    for char_index in range(len(self.text[line_index])):
-                        if (
-                            x[char_index]
-                            >= self._x + self._width - self.textOffsetRight
-                        ):
+                    for char_index in range(
+                        len(self.text[line_index]) - self.get_count_spec_chars(line_index)
+                    ):
+                        if x[char_index] >= self._x + self._width - self.textOffsetRight:
                             try:
-                                self.text[line_index + 1].insert(
-                                    0, self.text[line_index].pop()
-                                )
+                                self.text[line_index + 1].insert(0, self.text[line_index].pop())
                             except IndexError:
-                                self.text.insert(
-                                    line_index + 1, [self.text[line_index].pop()]
-                                )
+                                self.text.insert(line_index + 1, [self.text[line_index].pop()])
 
                             if self.cursorPosition >= len(self.text[line_index]):
                                 self.selected_line += 1
@@ -608,6 +624,8 @@ class MyTextBox(TextBox):
         """
         x = [self._x + self.textOffsetLeft]
         for char in self.text[line]:
+            if self.is_special_char(char):
+                continue
             char_render = self.font.render(
                 char,
                 True,
@@ -628,21 +646,22 @@ class MyTextBox(TextBox):
                 continue
 
             x = self.get_line_width(line - shift)
-            if self.text[line - shift][-1] != self.NEWLINE_CHAR:
+            if self.text[line - shift][-1] != "\n":
                 while (
                     x[-1] <= self._x + self._width - self.textOffsetRight
                     and len(self.text[line + 1 - shift]) > 0
                 ):
                     self.text[line - shift].append(self.text[line + 1 - shift].pop(0))
                     x = self.get_line_width(line - shift)
-        if len(self.text) != 1 and not self.text[-1]:
-            self.text.pop()
+
+    def get_count_spec_chars(self, line: int) -> int:
+        return len([char for char in self.text[line] if self.is_special_char(char)])
 
     def setText(self, text: str) -> None:
         self.text = [[]]
         self.selected_line = 0
         self.cursorPosition = 0
-        self.add_text(list(text))
+        self.add_text(text)
 
     def get_highlighted_text(self) -> str:
         return "".join("".join(line) for line in self.highlighted_text)

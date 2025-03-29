@@ -3,6 +3,14 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/Rubies/env" />
+      <excludeFolder url="file://$MODULE_DIR$/Scribble/venv/Lib" />
+      <excludeFolder url="file://$MODULE_DIR$/Scribble/venv/Scripts" />
+      <excludeFolder url="file://$MODULE_DIR$/Scribble/venv/include" />
+      <excludeFolder url="file://$MODULE_DIR$/Snake/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/TicTacToe/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/TicTacToe/venv/Include" />
+      <excludeFolder url="file://$MODULE_DIR$/TicTacToe/venv/Lib" />
+      <excludeFolder url="file://$MODULE_DIR$/TicTacToe/venv/Scripts" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.12 (IvanTasks)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

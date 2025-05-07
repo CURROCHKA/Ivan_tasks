@@ -4,16 +4,48 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e9aa74d5-5a94-41b4-b2b6-1ab1cd7e9334" name="Changes" comment="">
+    <list default="true" id="e9aa74d5-5a94-41b4-b2b6-1ab1cd7e9334" name="Changes" comment="minor edits, fix bug with delete">
+      <change afterPath="$PROJECT_DIR$/Scribble/client/app.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/components/board.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/components/chat.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/components/leaderboard.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/components/toolbar.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/constants.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/player/player.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/brush.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/eraser.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/redo.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/tool.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/trash.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/undo.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/images/brush.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/images/eraser.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/images/redo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/images/trash.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/images/undo.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/chat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/leaderboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/leaderboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/top_bar.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/top_bar.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/server/chat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/server/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/request_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/server/request_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/round.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/server/round.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/board.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/board.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/bottom_bar.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/bottom_bar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/chat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/images/brush.png" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/images/brush.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/images/eraser.png" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/images/eraser.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/images/filling.png" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/images/filling.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/images/trash.png" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/images/trash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/leaderboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/leaderboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/top_bar.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/top_bar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/server/board.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/board.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/server/chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/chat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/server/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/server/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/server/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/server/request_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/request_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/server/round.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/round.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/server/words.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/words.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,17 +86,22 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.client.executor&quot;: &quot;Run&quot;,
     &quot;Python.game.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.pygame_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.request_handler.executor&quot;: &quot;Run&quot;,
     &quot;Python.server.executor&quot;: &quot;Run&quot;,
     &quot;Python.temp.executor&quot;: &quot;Run&quot;,
     &quot;Python.textbox.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;com.codeium.enabled&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;dev__scribble&quot;,
-    &quot;last_opened_file_path&quot;: &quot;F:/Projects/IvanTasks/Scribble/client/images&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/Projects/IvanTasks/Scribble/images&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -76,14 +113,20 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\Projects\IvanTasks\Scribble\images" />
+      <recent name="F:\Projects\IvanTasks\Scribble\client" />
       <recent name="F:\Projects\IvanTasks\Scribble\client\images" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\Projects\IvanTasks\Scribble\images" />
+      <recent name="F:\Projects\IvanTasks\Scribble\client\components" />
+      <recent name="F:\Projects\IvanTasks\Scribble\client\tools" />
+      <recent name="F:\Projects\IvanTasks\Scribble\legacy" />
       <recent name="F:\Projects\IvanTasks\Scribble\client\images" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.pygame_test">
-    <configuration name="game" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.app">
+    <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IvanTasks" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -96,7 +139,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/client/game.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/client/app.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -105,7 +148,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="pygame_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="client" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IvanTasks" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -118,7 +161,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/client/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/client/client.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -127,7 +170,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="server" type="PythonConfigurationType" factoryName="Python">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IvanTasks" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -136,12 +179,33 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.12 (IvanTasks)" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scribble/legacy/client" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/server/request_handler.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/legacy/client/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="request_handler" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="IvanTasks" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scribble/legacy/server" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/legacy/server/request_handler.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -172,41 +236,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="textbox" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="IvanTasks" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scribble/venv/Lib/site-packages/pygame_widgets" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/venv/Lib/site-packages/pygame_widgets/textbox.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="Python.server" />
-      <item itemvalue="Python.game" />
       <item itemvalue="Python.temp" />
-      <item itemvalue="Python.textbox" />
-      <item itemvalue="Python.pygame_test" />
+      <item itemvalue="Python.app" />
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.client" />
+      <item itemvalue="Python.request_handler" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.pygame_test" />
+        <item itemvalue="Python.app" />
         <item itemvalue="Python.temp" />
-        <item itemvalue="Python.game" />
-        <item itemvalue="Python.textbox" />
+        <item itemvalue="Python.request_handler" />
+        <item itemvalue="Python.main" />
+        <item itemvalue="Python.client" />
       </list>
     </recent_temporary>
   </component>

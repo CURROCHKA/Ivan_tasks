@@ -65,7 +65,7 @@ class MainMenu(Window):
         return args
 
     def text_box_submit(self):
-        name = self.text_box.getText()
+        name = self.text_box.getText().strip()
         if len(name) >= 1:
             self.network = Network(name)
 

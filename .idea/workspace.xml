@@ -4,48 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e9aa74d5-5a94-41b4-b2b6-1ab1cd7e9334" name="Changes" comment="minor edits, fix bug with delete">
-      <change afterPath="$PROJECT_DIR$/Scribble/client/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/components/board.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/components/chat.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/components/leaderboard.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/components/toolbar.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/constants.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/player/player.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/brush.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/eraser.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/redo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/tool.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/trash.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/undo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/images/brush.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/images/eraser.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/images/redo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/images/trash.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/images/undo.png" afterDir="false" />
+    <list default="true" id="e9aa74d5-5a94-41b4-b2b6-1ab1cd7e9334" name="Changes" comment="rewrite. The work build">
+      <change afterPath="$PROJECT_DIR$/Scribble/client/components/top_bar.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/images/icon.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/board.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/board.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/bottom_bar.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/bottom_bar.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/chat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/images/brush.png" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/images/brush.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/images/eraser.png" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/images/eraser.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/images/filling.png" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/images/filling.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/images/trash.png" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/images/trash.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/leaderboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/leaderboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/network.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/top_bar.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/client/top_bar.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/board.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/board.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/chat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/request_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/request_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/round.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/round.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/server/words.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/legacy/server/words.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/components/board.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/components/board.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/components/chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/components/chat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/components/leaderboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/components/leaderboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/components/toolbar.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/components/toolbar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/tools/redo.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/tools/redo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/tools/undo.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/tools/undo.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -148,7 +118,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="client" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="game" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IvanTasks" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -157,11 +127,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scribble/client" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scribble/legacy/client" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/client/client.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/legacy/client/game.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -237,19 +207,19 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.game" />
       <item itemvalue="Python.temp" />
       <item itemvalue="Python.app" />
       <item itemvalue="Python.main" />
-      <item itemvalue="Python.client" />
       <item itemvalue="Python.request_handler" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.app" />
+        <item itemvalue="Python.game" />
         <item itemvalue="Python.temp" />
         <item itemvalue="Python.request_handler" />
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.client" />
       </list>
     </recent_temporary>
   </component>
@@ -337,7 +307,15 @@
       <option name="project" value="LOCAL" />
       <updated>1734370459900</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="rewrite. The work build">
+      <option name="closed" value="true" />
+      <created>1746640696539</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1746640696539</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -370,6 +348,7 @@
     <MESSAGE value="a brush has been added, now it's impossible to take 2 spec_button (previously it was possible)." />
     <MESSAGE value="made the UI more responsive, fixed bug" />
     <MESSAGE value="fixed bug: the fill, brush and eraser did not work well together" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed bug: the fill, brush and eraser did not work well together" />
+    <MESSAGE value="rewrite. The work build" />
+    <option name="LAST_COMMIT_MESSAGE" value="rewrite. The work build" />
   </component>
 </project>

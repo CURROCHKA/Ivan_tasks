@@ -16,14 +16,13 @@ from Scribble.client.tools.redo import Redo
 
 class Toolbar:
     def __init__(
-        self, win: pygame.surface.Surface, x: int, y: int, width: int, height: int, game
+        self, win: pygame.surface.Surface, x: int, y: int, width: int, height: int
     ) -> None:
         self.win = win
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.game = game
         self.tool_width = self.tool_height = round(self.height * TOOL_SIZE)
         self.tools = [
             Brush(

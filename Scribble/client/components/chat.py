@@ -56,8 +56,6 @@ class Chat:
         for event in events:
             if event.type == pygame.MOUSEWHEEL:
                 self.scroll_offset += event.y * self.font_size
-                # self.scroll_offset = max(min(self.scroll_offset, 0), self.height - self.textbox_height)
-                # self.surface.scroll(dy=event.y)
 
     def get_font_size(self):
         text = "Напишите что-нибудь"

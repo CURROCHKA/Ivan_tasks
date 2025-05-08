@@ -29,7 +29,6 @@ class Board:
             del self.undo_list[0]
 
     def undo(self) -> None:
-        print(self.undo_list.__sizeof__())
         if self.undo_list:
             self.redo_list.append(self.surface.copy())
             self.surface = self.undo_list.pop()

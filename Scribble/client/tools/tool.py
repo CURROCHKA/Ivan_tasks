@@ -16,7 +16,9 @@ class Tool(Button):
     ) -> None:
         super().__init__(win, x, y, width, height, **kwargs)
         self.tag = tag
-        self.image = pygame.transform.scale(self.image, (self._width, self._height))
+        self.selected = False
+        if self.image:
+            self.image = pygame.transform.scale(self.image, (self._width, self._height))
         self.old_colour = self.colour
         self.game = None
 

@@ -12,7 +12,7 @@ class Brush(Tool):
         y: int,
         width: int,
         height: int,
-        thickness: int = 1,
+        thickness: int = 10,
         **kwargs
     ) -> None:
         super().__init__(
@@ -30,34 +30,77 @@ class Brush(Tool):
         self.mouse_down = False
         self.last_pos = None
 
+        self.cursor = None
+
     def on_click(self) -> None:
         self.game.set_tool(self)
         self.inactiveColour = self.pressedColour
 
     def listen(self, events: list[pygame.event.Event]) -> None:
         super().listen(events)
-        if self.game.tool is self:
-            for event in events:
-                try:
-                    pos = event.pos
-                except AttributeError:
-                    continue
+        if not self.selected:
+            return
 
-                if not self.game.board.contains(*pos):
-                    self.mouse_down = False
-                    self.last_pos = None
-                    break
+        for event in events:
+            try:
+                pos = event.pos
+            except AttributeError:
+                continue
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.mouse_down_handler()
-                elif event.type == pygame.MOUSEBUTTONUP:
-                    self.mouse_up_handler()
-                elif event.type == pygame.MOUSEMOTION:
-                    self.mouse_motion_handler(pos)
+            if not self.game.board.contains(*pos):
+                self.mouse_down = False
+                self.last_pos = None
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                break
 
-    def mouse_down_handler(self) -> None:
-        self.mouse_down = True
+            if self.game.toolbar.tools["thickness_selector"].selector.contains(*pos):
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                break
+
+            if self.cursor is None or self.thickness != self.game.toolbar.tools["thickness_selector"].selector.getValue():
+                self.thickness = self.game.toolbar.tools["thickness_selector"].selector.getValue()
+                self.cursor = self.create_cursor()
+            pygame.mouse.set_cursor(self.cursor)
+
+            self.mouse_down = pygame.mouse.get_pressed()[0]
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.mouse_down_handler(pos)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.mouse_up_handler()
+            elif event.type == pygame.MOUSEMOTION and self.game.toolbar.tools["thickness_selector"].selector._hidden:
+                self.mouse_motion_handler(pos)
+
+    def create_cursor(self):
+        radius = self.thickness
+        diameter = self.thickness * 2 + 1
+        cursor_surface = pygame.Surface((diameter, diameter), pygame.SRCALPHA)
+
+        pygame.draw.circle(
+            cursor_surface,
+            self.game.drawing_color,
+            (radius, radius),
+            radius,
+        )
+
+        return pygame.cursors.Cursor((radius, radius), cursor_surface)
+
+    def mouse_down_handler(self, pos: tuple[int, int]) -> None:
+        if not self.game.toolbar.tools["thickness_selector"].selector._hidden:
+            self.game.toolbar.tools["thickness_selector"].selector.hide()
+
+        x, y = pos
+        x -= self.game.board.x
+        y -= self.game.board.y
+
         self.game.board.push_to_undo(self.game.board.surface.copy())
+
+        for i in range(-self.thickness + 1, self.thickness):
+            for j in range(-self.thickness + 1, self.thickness):
+                if i**2 + j**2 <= self.thickness**2:
+                    self.game.board.surface.set_at(
+                        (int(x) + i, int(y) + j), self.game.drawing_color
+                    )
 
     def mouse_up_handler(self) -> None:
         self.mouse_down = False
@@ -84,10 +127,11 @@ class Brush(Tool):
 
         if self.last_pos:
             for px, py in self.interpolate_points(self.last_pos, (x, y)):
-                for i in range(self.thickness):
-                    for j in range(self.thickness):
-                        self.game.board.surface.set_at(
-                            (int(px) + i, int(py) + j), self.game.drawing_color
-                        )
+                for i in range(-self.thickness + 1, self.thickness):
+                    for j in range(-self.thickness + 1, self.thickness):
+                        if i**2 + j**2 <= self.thickness**2:
+                            self.game.board.surface.set_at(
+                                (int(px) + i, int(py) + j), self.game.drawing_color
+                            )
 
         self.last_pos = (x, y)

@@ -4,18 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e9aa74d5-5a94-41b4-b2b6-1ab1cd7e9334" name="Changes" comment="rewrite. The work build">
-      <change afterPath="$PROJECT_DIR$/Scribble/client/components/top_bar.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scribble/images/icon.png" afterDir="false" />
+    <list default="true" id="e9aa74d5-5a94-41b4-b2b6-1ab1cd7e9334" name="Changes" comment="redesign">
+      <change afterPath="$PROJECT_DIR$/Scribble/client/tools/thickness_selector.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scribble/images/line_weight.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scribble/client/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/components/board.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/components/board.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/components/chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/components/chat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/components/leaderboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/components/leaderboard.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scribble/client/components/toolbar.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/components/toolbar.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/constants.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/tools/redo.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/tools/redo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scribble/client/tools/undo.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/tools/undo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/components/top_bar.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/components/top_bar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/tools/brush.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/tools/brush.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/tools/eraser.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/tools/eraser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/client/tools/tool.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/client/tools/tool.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scribble/temp.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scribble/temp.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +62,7 @@
     &quot;Python.pygame_test.executor&quot;: &quot;Run&quot;,
     &quot;Python.request_handler.executor&quot;: &quot;Run&quot;,
     &quot;Python.server.executor&quot;: &quot;Run&quot;,
+    &quot;Python.slider.executor&quot;: &quot;Run&quot;,
     &quot;Python.temp.executor&quot;: &quot;Run&quot;,
     &quot;Python.textbox.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
@@ -140,7 +140,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="slider" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IvanTasks" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -149,33 +149,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scribble/legacy/client" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scribble/venv/Lib/site-packages/pygame_widgets" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/legacy/client/main.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="request_handler" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="IvanTasks" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scribble/legacy/server" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/legacy/server/request_handler.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/venv/Lib/site-packages/pygame_widgets/slider.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -206,20 +184,42 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="thickness_selector" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="IvanTasks" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scribble/client/tools" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scribble/client/tools/thickness_selector.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
+      <item itemvalue="Python.thickness_selector" />
+      <item itemvalue="Python.slider" />
       <item itemvalue="Python.game" />
       <item itemvalue="Python.temp" />
       <item itemvalue="Python.app" />
-      <item itemvalue="Python.main" />
-      <item itemvalue="Python.request_handler" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.app" />
-        <item itemvalue="Python.game" />
+        <item itemvalue="Python.thickness_selector" />
+        <item itemvalue="Python.slider" />
         <item itemvalue="Python.temp" />
-        <item itemvalue="Python.request_handler" />
-        <item itemvalue="Python.main" />
+        <item itemvalue="Python.game" />
       </list>
     </recent_temporary>
   </component>
@@ -315,7 +315,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746640696539</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="redesign">
+      <option name="closed" value="true" />
+      <created>1746722528113</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1746722528113</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -349,6 +357,7 @@
     <MESSAGE value="made the UI more responsive, fixed bug" />
     <MESSAGE value="fixed bug: the fill, brush and eraser did not work well together" />
     <MESSAGE value="rewrite. The work build" />
-    <option name="LAST_COMMIT_MESSAGE" value="rewrite. The work build" />
+    <MESSAGE value="redesign" />
+    <option name="LAST_COMMIT_MESSAGE" value="redesign" />
   </component>
 </project>

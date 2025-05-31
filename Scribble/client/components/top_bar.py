@@ -47,6 +47,10 @@ class TopBar:
         self.round = value
 
     def draw(self) -> None:
+        pygame.draw.rect(
+            self.win, TOP_BAR_COLOR, (self.x, self.y, self.width, self.height)
+        )
+
         time_render = self.font.render(str(self.time), 1, BORDER_COLOR)
         round_render = self.font.render(
             f"Раунд {self.round} из {self.max_rounds}", 1, BORDER_COLOR
@@ -61,7 +65,10 @@ class TopBar:
         )
         self.win.blit(
             round_render,
-            (self.x + 5 * self.height // 3, self.y + self.height // 2 - round_render.get_height() // 2),
+            (
+                self.x + 5 * self.height // 3,
+                self.y + self.height // 2 - round_render.get_height() // 2,
+            ),
         )
 
         pygame.draw.circle(

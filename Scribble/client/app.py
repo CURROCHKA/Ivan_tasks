@@ -2,9 +2,9 @@ import sys
 import pygame
 import pygame_widgets
 
+from Scribble.client.tools.tool import Tool
 from Scribble.client.components.top_bar import TopBar
 from Scribble.client.components.toolbar import Toolbar
-from Scribble.client.tools.tool import Tool
 from Scribble.client.components.board import Board
 from Scribble.client.components.leaderboard import LeaderBoard
 from Scribble.client.components.chat import Chat
@@ -72,7 +72,7 @@ class App:
 
         self.tool = None
         for tool in self.toolbar.tools:
-            tool.game = self
+            self.toolbar.tools[tool].game = self
 
         pygame.display.set_icon(pygame.image.load("../images/icon.png"))
         pygame.display.set_caption("Scribble")
@@ -80,7 +80,9 @@ class App:
     def set_tool(self, tool: Tool) -> None:
         if self.tool:
             self.tool.inactiveColour = self.tool.old_colour
+            self.tool.selected = False
         self.tool = tool
+        self.tool.selected = True
 
     def run(self) -> None:
         while True:
@@ -109,5 +111,5 @@ class App:
 
 if __name__ == "__main__":
     pygame.init()
-    app = App(800, 600, fullscreen=True)
+    app = App(800, 600, fullscreen=False)
     app.run()

@@ -1,5 +1,6 @@
 #include <cmath>
-#include <cstdio>
+#include <iomanip>
+#include <iostream>
 #include <map>
 #include <stdexcept>
 #include <string>
@@ -1341,41 +1342,46 @@ string Player::getTypeName() const { return "Игрок"; }
 // и по шагам вызывает их методы.
 
 
+// Выводит корабль и все его детали
 static void printShip(Ship& ship) {
-    printf("%s «%s»: масса %.2f т, скорость %.2f св. лет/ход, топливо %.1f\n",
-        ship.getTypeName().c_str(), ship.getName().c_str(),
-        ship.getTotalMass(), ship.getSpeed(), ship.getFuel());
+    cout << ship.getTypeName() << " «" << ship.getName() << "»: масса "
+         << ship.getTotalMass() << " т, скорость " << ship.getSpeed()
+         << " св. лет/ход, топливо " << ship.getFuel() << endl;
     vector<Part*> parts = ship.getParts();
     for (size_t i = 0; i < parts.size(); i++) {
-        printf("  %-14s %-22s прочность %3d/%-3d масса с содержимым %.2f т\n",
-            parts[i]->getTypeName().c_str(), parts[i]->getName().c_str(),
-            parts[i]->getDurability(), parts[i]->getMaxDurability(),
-            parts[i]->getTotalMass());
+        cout << "  " << parts[i]->getTypeName() << " «" << parts[i]->getName()
+             << "»: прочность " << parts[i]->getDurability() << "/"
+             << parts[i]->getMaxDurability() << ", масса с содержимым "
+             << parts[i]->getTotalMass() << " т" << endl;
     }
 }
 
-static void printStock(Market& market, const char* planetName) {
-    printf("Рынок планеты %s:\n", planetName);
+// Выводит товары рынка с ценами продажи и покупки
+static void printStock(Market& market, const string& planetName) {
+    cout << "Рынок планеты " << planetName << ":" << endl;
     const vector<Cargo>& stock = market.getStock();
     for (size_t i = 0; i < stock.size(); i++) {
         const Product* p = stock[i].getProduct();
-        printf("  %-22s %4d шт.  продажа %4d  покупка %4d\n", p->getName().c_str(),
-            stock[i].getQuantity(), market.getSellPrice(*p), market.getBuyPrice(*p));
+        cout << "  " << p->getName() << ": " << stock[i].getQuantity()
+             << " шт., продажа " << market.getSellPrice(*p)
+             << ", покупка " << market.getBuyPrice(*p) << endl;
     }
 }
 
 int main() {
     setlocale(LC_ALL, "Russian");
+    cout << fixed << setprecision(2);  // дробные числа с двумя знаками после запятой
     try {
-        // Каталог товаров
+        // 1. Каталог товаров: название, себестоимость, масса единицы
         Product food("Еда", 20, 0.5);
         Product meds("Медикаменты", 80, 0.2);
         Product luxury("Предметы роскоши", 200, 0.1);
 
-        // Планеты
+        // 2. Две планеты: аграрная Терра и технологическая Нова
         Planet terra("Терра", 1, 1, EconomyType::Agrarian);
         Planet nova("Нова", 7, 5, EconomyType::Tech);
 
+        // 3. Товары на рынках и детали на верфи Терры
         terra.getMarket().addStock(Cargo(&food, 200));
         terra.getMarket().addStock(Cargo(&meds, 50));
         nova.getMarket().addStock(Cargo(&luxury, 30));
@@ -1384,66 +1390,69 @@ int main() {
         terra.getShipyard().addFuelTank(new FuelTank("Бак Б-100", 2, 40, 300, 100));
         terra.getShipyard().addCargoHold(new CargoHold("Трюм Т-50", 4, 60, 500, 50));
 
-        // Игрок и корабль
+        // 4. Игрок с 5000 кредитов и корабль с одним корпусом на Терре
         Player player("Капитан", 5000);
         Ship* ship = new Ship("Ласточка", Hull("Корпус К-3", 10, 100, 1000, 20, 3), &terra);
         player.addShip(ship);
 
+        // 5. Игрок покупает на верфи двигатель, бак и трюм
         Shipyard& yard = terra.getShipyard();
         yard.sellEngine(0, player, *ship);
         yard.sellFuelTank(0, player, *ship);
         yard.sellCargoHold(0, player, *ship);
-        printf("После покупки деталей баланс: %d\n", player.getBalance());
+        cout << "После покупки деталей баланс: " << player.getBalance() << endl;
 
+        // 6. Заправка и вывод корабля
         ship->refuel(100);
         printShip(*ship);
 
-        // Покупка товара
-        printStock(terra.getMarket(), terra.getName().c_str());
+        // 7. Покупка 60 единиц еды на Терре
+        printStock(terra.getMarket(), terra.getName());
         if (terra.getMarket().sellToPlayer("Еда", 60, player, *ship))
-            printf("Куплено 60 ед. еды. Баланс: %d\n", player.getBalance());
+            cout << "Куплено 60 ед. еды. Баланс: " << player.getBalance() << endl;
 
-        // Перелёт
-        printf("Расстояние Терра — Нова: %.2f св. лет\n", terra.distanceTo(nova));
+        // 8. Перелёт на Нову с нападением пиратов в пути
+        cout << "Расстояние Терра — Нова: " << terra.distanceTo(nova) << " св. лет" << endl;
         ship->startFlight(&nova);
         ship->applyHazard(HazardType::Pirates, 10);
-        printf("Нападение пиратов во время перелёта.\n");
+        cout << "Нападение пиратов во время перелёта." << endl;
         while (ship->isInFlight())
             ship->nextTurn();
-        printf("Корабль прибыл на планету %s.\n", ship->getLocation()->getName().c_str());
+        cout << "Корабль прибыл на планету " << ship->getLocation()->getName() << "." << endl;
         printShip(*ship);
 
-        // Событие на планете и продажа товара
+        // 9. На Нове катастрофа, еда дорожает. Игрок продаёт оставшуюся еду
         nova.startEvent(EventType::Catastrophe, 3);
         if (nova.getMarket().buyFromPlayer("Еда", 54, player, *ship))
-            printf("Продано 54 ед. еды. Баланс: %d\n", player.getBalance());
+            cout << "Продано 54 ед. еды. Баланс: " << player.getBalance() << endl;
 
-        // Ремонт
-        printf("Цена ремонта: %d\n", nova.getShipyard().getRepairCost(*ship));
+        // 10. Ремонт корабля на верфи Новы
+        cout << "Цена ремонта: " << nova.getShipyard().getRepairCost(*ship) << endl;
         if (nova.getShipyard().repairShip(*ship, player))
-            printf("Корабль отремонтирован. Баланс: %d\n", player.getBalance());
+            cout << "Корабль отремонтирован. Баланс: " << player.getBalance() << endl;
 
-        // Виртуальный базовый класс: в детали один подобъект Entity.
+        // 11. Виртуальный базовый класс: в детали один подобъект Entity.
         // Через Damageable и через Tradable видны одни и те же id и name.
         Engine testEngine("Плазменный П-2", 4, 70, 1500, 120, 0.8);
         Damageable* asDamageable = &testEngine;
         Tradable* asTradable = &testEngine;
-        printf("Через Damageable: id %d, %s. Через Tradable: id %d, %s.\n",
-            asDamageable->getId(), asDamageable->getName().c_str(),
-            asTradable->getId(), asTradable->getName().c_str());
+        cout << "Через Damageable: id " << asDamageable->getId() << ", " << asDamageable->getName()
+             << ". Через Tradable: id " << asTradable->getId() << ", " << asTradable->getName()
+             << "." << endl;
 
-        // Операторы класса Cargo
+        // 12. Операторы класса Cargo: +, префиксный ++, -=
         Cargo a(&food, 10, 100);
         Cargo b(&food, 30, 60);
         Cargo c = a + b;
         ++c;
         c -= 5;
-        printf("Партия: %d шт., состояние %d%%\n", c.getQuantity(), c.getCondition());
+        cout << "Партия: " << c.getQuantity() << " шт., состояние " << c.getCondition() << "%" << endl;
 
-        printf("Цель игры: %d кредитов за %d ходов.\n", TARGET_BALANCE, MAX_TURNS);
+        cout << "Цель игры: " << TARGET_BALANCE << " кредитов за " << MAX_TURNS << " ходов." << endl;
     }
     catch (const exception& e) {
-        printf("Ошибка: %s\n", e.what());
+        // Сюда попадает любое исключение, которое выбросили методы классов
+        cout << "Ошибка: " << e.what() << endl;
         return 1;
     }
     return 0;

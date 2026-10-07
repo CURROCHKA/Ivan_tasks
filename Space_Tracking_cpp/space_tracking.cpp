@@ -41,7 +41,7 @@ const int MAX_TURNS = 100;
 const int MAP_SIZE = 10;
 
 // ----- Entity -----
-// Объект игры: уникальный номер и название
+// Объект игры: уникальный номер и название (абстрактный класс)
 class Entity {
 protected:
     int id;
@@ -58,11 +58,11 @@ public:
     int getId() const;
     string getName() const;
     void setName(const string& name);
-    virtual string getTypeName() const;
+    virtual string getTypeName() const = 0;
 };
 
 // ----- Tradable -----
-// Объект с ценой
+// Объект с ценой (абстрактный класс)
 class Tradable : virtual public Entity {
 protected:
     int price;
@@ -74,10 +74,11 @@ public:
 
     int getPrice() const;
     void setPrice(int price);
+    virtual string getTypeName() const = 0;
 };
 
 // ----- Damageable -----
-// Объект с прочностью
+// Объект с прочностью (абстрактный класс)
 class Damageable : virtual public Entity {
 protected:
     int maxDurability;
@@ -94,6 +95,7 @@ public:
     virtual void takeDamage(int damage);
     void repair(int points);
     Damageable& operator-=(int damage);
+    virtual string getTypeName() const = 0;
 };
 
 // ----- Part -----
@@ -418,7 +420,6 @@ void Entity::setName(const string& name) {
     this->name = name;
 }
 
-string Entity::getTypeName() const { return "Объект"; }
 
 // ----- Tradable -----
 Tradable::Tradable() : Entity(), price(0) {}

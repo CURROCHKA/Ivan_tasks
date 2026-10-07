@@ -1,14 +1,12 @@
-// Space Tracking: классы предметной области (C++), весь код в одном файле.
 #include <cmath>
 #include <cstdio>
 #include <map>
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <locale>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
+using namespace std;
 
 // ===== Объявления классов =====
 
@@ -47,31 +45,31 @@ const int MAP_SIZE = 10;
 class Entity {
 protected:
     int id;
-    std::string name;
+    string name;
 
 private:
     static int nextId;
 
 public:
     Entity();
-    Entity(const std::string& name);
+    Entity(const string& name);
     virtual ~Entity();
 
     int getId() const;
-    std::string getName() const;
-    void setName(const std::string& name);
-    virtual std::string getTypeName() const;
+    string getName() const;
+    void setName(const string& name);
+    virtual string getTypeName() const;
 };
 
 // ----- Tradable -----
 // Объект с ценой
-class Tradable {
+class Tradable : virtual public Entity {
 protected:
     int price;
 
 public:
     Tradable();
-    Tradable(int price);
+    Tradable(const string& name, int price);
     virtual ~Tradable();
 
     int getPrice() const;
@@ -80,14 +78,14 @@ public:
 
 // ----- Damageable -----
 // Объект с прочностью
-class Damageable : public Entity {
+class Damageable : virtual public Entity {
 protected:
     int maxDurability;
     int durability;
 
 public:
     Damageable();
-    Damageable(const std::string& name, int maxDurability);
+    Damageable(const string& name, int maxDurability);
 
     int getDurability() const;
     int getMaxDurability() const;
@@ -106,11 +104,11 @@ protected:
 
 public:
     Part();
-    Part(const std::string& name, double mass, int maxDurability, int price);
+    Part(const string& name, double mass, int maxDurability, int price);
 
     double getMass() const;
     virtual double getTotalMass() const;
-    virtual std::string getTypeName() const = 0;
+    virtual string getTypeName() const = 0;
 };
 
 // ----- Hull -----
@@ -122,12 +120,12 @@ private:
 
 public:
     Hull();
-    Hull(const std::string& name, double mass, int maxDurability, int price, int armor, int slots);
+    Hull(const string& name, double mass, int maxDurability, int price, int armor, int slots);
 
     int getArmor() const;
     int getSlots() const;
     void takeDamage(int damage);
-    std::string getTypeName() const;
+    string getTypeName() const;
 };
 
 // ----- Engine -----
@@ -139,14 +137,14 @@ private:
 
 public:
     Engine();
-    Engine(const std::string& name, double mass, int maxDurability, int price,
-           double power, double fuelConsumption);
+    Engine(const string& name, double mass, int maxDurability, int price,
+        double power, double fuelConsumption);
 
     double getPower() const;
     double getFuelConsumption() const;
     double getFuelForDistance(double distance) const;
     double getSpeed(double shipMass) const;
-    std::string getTypeName() const;
+    string getTypeName() const;
 };
 
 // ----- FuelTank -----
@@ -158,7 +156,7 @@ private:
 
 public:
     FuelTank();
-    FuelTank(const std::string& name, double mass, int maxDurability, int price, double fuelCapacity);
+    FuelTank(const string& name, double mass, int maxDurability, int price, double fuelCapacity);
 
     double getFuelCapacity() const;
     double getFuel() const;
@@ -166,22 +164,22 @@ public:
     bool consumeFuel(double amount);
     void takeDamage(int damage);
     double getTotalMass() const;
-    std::string getTypeName() const;
+    string getTypeName() const;
 };
 
 // ----- Product -----
 // Товар каталога
-class Product : public Entity, public Tradable {
+class Product : public Tradable {
 private:
     double unitMass;
 
 public:
     Product();
-    Product(const std::string& name, int baseCost, double unitMass);
+    Product(const string& name, int baseCost, double unitMass);
 
     double getUnitMass() const;
     bool operator==(const Product& other) const;
-    std::string getTypeName() const;
+    string getTypeName() const;
 };
 
 // ----- Cargo -----
@@ -216,21 +214,21 @@ public:
 class CargoHold : public Part {
 private:
     double cargoCapacity;
-    std::vector<Cargo> cargo;
+    vector<Cargo> cargo;
 
 public:
     CargoHold();
-    CargoHold(const std::string& name, double mass, int maxDurability, int price, double cargoCapacity);
+    CargoHold(const string& name, double mass, int maxDurability, int price, double cargoCapacity);
 
     double getCargoCapacity() const;
-    const std::vector<Cargo>& getCargo() const;
+    const vector<Cargo>& getCargo() const;
     double getCargoMass() const;
     double getFreeCapacity() const;
     bool loadCargo(const Cargo& c);
-    Cargo unloadCargo(const std::string& productName, int quantity);
+    Cargo unloadCargo(const string& productName, int quantity);
     void loseCargo(int percent);
     double getTotalMass() const;
-    std::string getTypeName() const;
+    string getTypeName() const;
 };
 
 // ----- Ship -----
@@ -240,20 +238,20 @@ class Planet;
 class Ship : public Entity {
 private:
     Hull hull;
-    std::vector<Engine*> engines;
-    std::vector<FuelTank*> tanks;
-    std::vector<CargoHold*> holds;
+    vector<Engine*> engines;
+    vector<FuelTank*> tanks;
+    vector<CargoHold*> holds;
     Planet* location;
     Planet* destination;
     int turnsLeft;
 
 public:
     Ship();
-    Ship(const std::string& name, const Hull& hull, Planet* location);
+    Ship(const string& name, const Hull& hull, Planet* location);
     ~Ship();
 
     const Hull& getHull() const;
-    std::vector<Part*> getParts();
+    vector<Part*> getParts();
     Planet* getLocation() const;
     bool isInFlight() const;
     int getFreeSlots() const;
@@ -268,10 +266,10 @@ public:
     double refuel(double amount);
 
     bool loadCargo(const Cargo& c);
-    Cargo unloadCargo(const std::string& productName, int quantity);
+    Cargo unloadCargo(const string& productName, int quantity);
 
     bool hasBrokenParts();
-    std::string getTypeName() const;
+    string getTypeName() const;
 
     bool canFlyTo(const Planet& target);
     void startFlight(Planet* target);
@@ -290,8 +288,8 @@ class Ship;
 class Market {
 private:
     MarketKind kind;
-    std::vector<Cargo> stock;
-    std::map<std::string, double> priceFactors;
+    vector<Cargo> stock;
+    map<string, double> priceFactors;
     EconomyType economy;  // нужен, чтобы вернуть коэффициенты после события
 
 public:
@@ -300,12 +298,12 @@ public:
 
     MarketKind getKind() const;
     void addStock(const Cargo& c);
-    const std::vector<Cargo>& getStock() const;
-    void setPriceFactor(const std::string& productName, double factor);
+    const vector<Cargo>& getStock() const;
+    void setPriceFactor(const string& productName, double factor);
     int getSellPrice(const Product& p) const;
     int getBuyPrice(const Product& p) const;
-    bool sellToPlayer(const std::string& productName, int quantity, Player& player, Ship& ship);
-    bool buyFromPlayer(const std::string& productName, int quantity, Player& player, Ship& ship);
+    bool sellToPlayer(const string& productName, int quantity, Player& player, Ship& ship);
+    bool buyFromPlayer(const string& productName, int quantity, Player& player, Ship& ship);
     void applyEconomy(EconomyType economy);
     void applyEvent(EventType event);
 };
@@ -317,9 +315,9 @@ class Player;
 // Верфь: продаёт детали и ремонтирует корабли
 class Shipyard {
 private:
-    std::vector<Engine*> engines;
-    std::vector<FuelTank*> tanks;
-    std::vector<CargoHold*> holds;
+    vector<Engine*> engines;
+    vector<FuelTank*> tanks;
+    vector<CargoHold*> holds;
     int repairCostPerPoint;
 
 public:
@@ -331,9 +329,9 @@ public:
     void addFuelTank(FuelTank* tank);
     void addCargoHold(CargoHold* hold);
 
-    const std::vector<Engine*>& getEngines() const;
-    const std::vector<FuelTank*>& getFuelTanks() const;
-    const std::vector<CargoHold*>& getCargoHolds() const;
+    const vector<Engine*>& getEngines() const;
+    const vector<FuelTank*>& getFuelTanks() const;
+    const vector<CargoHold*>& getCargoHolds() const;
 
     bool sellEngine(int index, Player& player, Ship& ship);
     bool sellFuelTank(int index, Player& player, Ship& ship);
@@ -357,7 +355,7 @@ private:
 
 public:
     Planet();
-    Planet(const std::string& name, double x, double y, EconomyType economy);
+    Planet(const string& name, double x, double y, EconomyType economy);
 
     double getX() const;
     double getY() const;
@@ -368,7 +366,7 @@ public:
     void nextTurn();
     Market& getMarket();
     Shipyard& getShipyard();
-    std::string getTypeName() const;
+    string getTypeName() const;
 };
 
 // ----- Player -----
@@ -378,11 +376,11 @@ class Ship;
 class Player : public Entity {
 private:
     int balance;
-    std::vector<Ship*> fleet;
+    vector<Ship*> fleet;
 
 public:
     Player();
-    Player(const std::string& name, int balance);
+    Player(const string& name, int balance);
     ~Player();
 
     int getBalance() const;
@@ -393,7 +391,7 @@ public:
     void addShip(Ship* ship);
     Ship& getShip(int index);
     int getFleetSize() const;
-    std::string getTypeName() const;
+    string getTypeName() const;
 };
 
 // ===== Реализация методов =====
@@ -403,31 +401,31 @@ int Entity::nextId = 1;
 
 Entity::Entity() : id(nextId++), name("Без названия") {}
 
-Entity::Entity(const std::string& name) : id(nextId++), name(name) {
+Entity::Entity(const string& name) : id(nextId++), name(name) {
     if (name.empty())
-        throw std::invalid_argument("Entity: пустое название");
+        throw invalid_argument("Entity: пустое название");
 }
 
 Entity::~Entity() {}
 
 int Entity::getId() const { return id; }
 
-std::string Entity::getName() const { return name; }
+string Entity::getName() const { return name; }
 
-void Entity::setName(const std::string& name) {
+void Entity::setName(const string& name) {
     if (name.empty())
-        throw std::invalid_argument("Entity: пустое название");
+        throw invalid_argument("Entity: пустое название");
     this->name = name;
 }
 
-std::string Entity::getTypeName() const { return "Объект"; }
+string Entity::getTypeName() const { return "Объект"; }
 
 // ----- Tradable -----
-Tradable::Tradable() : price(0) {}
+Tradable::Tradable() : Entity(), price(0) {}
 
-Tradable::Tradable(int price) : price(price) {
+Tradable::Tradable(const string& name, int price) : Entity(name), price(price) {
     if (price < 0)
-        throw std::invalid_argument("Tradable: цена меньше 0");
+        throw invalid_argument("Tradable: цена меньше 0");
 }
 
 Tradable::~Tradable() {}
@@ -436,17 +434,17 @@ int Tradable::getPrice() const { return price; }
 
 void Tradable::setPrice(int price) {
     if (price < 0)
-        throw std::invalid_argument("Tradable: цена меньше 0");
+        throw invalid_argument("Tradable: цена меньше 0");
     this->price = price;
 }
 
 // ----- Damageable -----
 Damageable::Damageable() : Entity(), maxDurability(100), durability(100) {}
 
-Damageable::Damageable(const std::string& name, int maxDurability)
+Damageable::Damageable(const string& name, int maxDurability)
     : Entity(name), maxDurability(maxDurability), durability(maxDurability) {
     if (maxDurability < 1)
-        throw std::invalid_argument("Damageable: прочность меньше 1");
+        throw invalid_argument("Damageable: прочность меньше 1");
 }
 
 int Damageable::getDurability() const { return durability; }
@@ -461,7 +459,7 @@ bool Damageable::isBroken() const { return durability == 0; }
 
 void Damageable::takeDamage(int damage) {
     if (damage < 0)
-        throw std::invalid_argument("Damageable: урон меньше 0");
+        throw invalid_argument("Damageable: урон меньше 0");
     durability -= damage;
     if (durability < 0)
         durability = 0;
@@ -469,7 +467,7 @@ void Damageable::takeDamage(int damage) {
 
 void Damageable::repair(int points) {
     if (points < 0)
-        throw std::invalid_argument("Damageable: ремонт меньше 0");
+        throw invalid_argument("Damageable: ремонт меньше 0");
     durability += points;
     if (durability > maxDurability)
         durability = maxDurability;
@@ -481,12 +479,17 @@ Damageable& Damageable::operator-=(int damage) {
 }
 
 // ----- Part -----
-Part::Part() : Damageable(), Tradable(), mass(1) {}
+Part::Part() : Entity(), Damageable(), Tradable(), mass(1) {}
 
-Part::Part(const std::string& name, double mass, int maxDurability, int price)
-    : Damageable(name, maxDurability), Tradable(price), mass(mass) {
+// Entity — виртуальный базовый класс для Damageable и Tradable.
+// В объекте Part один подобъект Entity. Его конструктор вызывает
+// самый производный класс, поэтому Entity(name) стоит первым в списке
+// инициализации. Вызовы Entity(name) внутри Damageable и Tradable при этом
+// не выполняются.
+Part::Part(const string& name, double mass, int maxDurability, int price)
+    : Entity(name), Damageable(name, maxDurability), Tradable(name, price), mass(mass) {
     if (mass <= 0)
-        throw std::invalid_argument("Part: масса не больше 0");
+        throw invalid_argument("Part: масса не больше 0");
 }
 
 double Part::getMass() const { return mass; }
@@ -496,12 +499,13 @@ double Part::getTotalMass() const { return mass; }
 // ----- Hull -----
 Hull::Hull() : Part(), armor(0), slots(3) {}
 
-Hull::Hull(const std::string& name, double mass, int maxDurability, int price, int armor, int slots)
-    : Part(name, mass, maxDurability, price), armor(armor), slots(slots) {
+// Hull — самый производный класс, поэтому он сам вызывает Entity(name)
+Hull::Hull(const string& name, double mass, int maxDurability, int price, int armor, int slots)
+    : Entity(name), Part(name, mass, maxDurability, price), armor(armor), slots(slots) {
     if (armor < 0 || armor > 80)
-        throw std::invalid_argument("Hull: броня вне диапазона 0..80");
+        throw invalid_argument("Hull: броня вне диапазона 0..80");
     if (slots < 1)
-        throw std::invalid_argument("Hull: мест меньше 1");
+        throw invalid_argument("Hull: мест меньше 1");
 }
 
 int Hull::getArmor() const { return armor; }
@@ -510,21 +514,21 @@ int Hull::getSlots() const { return slots; }
 
 void Hull::takeDamage(int damage) {
     if (damage < 0)
-        throw std::invalid_argument("Hull: урон меньше 0");
+        throw invalid_argument("Hull: урон меньше 0");
     int reduced = damage * (100 - armor) / 100;
     Damageable::takeDamage(reduced);
 }
 
-std::string Hull::getTypeName() const { return "Корпус"; }
+string Hull::getTypeName() const { return "Корпус"; }
 
 // ----- Engine -----
 Engine::Engine() : Part(), power(100), fuelConsumption(1) {}
 
-Engine::Engine(const std::string& name, double mass, int maxDurability, int price,
-               double power, double fuelConsumption)
-    : Part(name, mass, maxDurability, price), power(power), fuelConsumption(fuelConsumption) {
+Engine::Engine(const string& name, double mass, int maxDurability, int price,
+    double power, double fuelConsumption)
+    : Entity(name), Part(name, mass, maxDurability, price), power(power), fuelConsumption(fuelConsumption) {
     if (power <= 0 || fuelConsumption <= 0)
-        throw std::invalid_argument("Engine: мощность или расход не больше 0");
+        throw invalid_argument("Engine: мощность или расход не больше 0");
 }
 
 double Engine::getPower() const { return power; }
@@ -541,15 +545,15 @@ double Engine::getSpeed(double shipMass) const {
     return power / shipMass;
 }
 
-std::string Engine::getTypeName() const { return "Двигатель"; }
+string Engine::getTypeName() const { return "Двигатель"; }
 
 // ----- FuelTank -----
 FuelTank::FuelTank() : Part(), fuelCapacity(100), fuel(0) {}
 
-FuelTank::FuelTank(const std::string& name, double mass, int maxDurability, int price, double fuelCapacity)
-    : Part(name, mass, maxDurability, price), fuelCapacity(fuelCapacity), fuel(0) {
+FuelTank::FuelTank(const string& name, double mass, int maxDurability, int price, double fuelCapacity)
+    : Entity(name), Part(name, mass, maxDurability, price), fuelCapacity(fuelCapacity), fuel(0) {
     if (fuelCapacity <= 0)
-        throw std::invalid_argument("FuelTank: объём не больше 0");
+        throw invalid_argument("FuelTank: объём не больше 0");
 }
 
 double FuelTank::getFuelCapacity() const { return fuelCapacity; }
@@ -558,7 +562,7 @@ double FuelTank::getFuel() const { return fuel; }
 
 double FuelTank::refuel(double amount) {
     if (amount < 0)
-        throw std::invalid_argument("FuelTank: количество меньше 0");
+        throw invalid_argument("FuelTank: количество меньше 0");
     double added = fuelCapacity - fuel;
     if (amount < added)
         added = amount;
@@ -568,7 +572,7 @@ double FuelTank::refuel(double amount) {
 
 bool FuelTank::consumeFuel(double amount) {
     if (amount < 0)
-        throw std::invalid_argument("FuelTank: количество меньше 0");
+        throw invalid_argument("FuelTank: количество меньше 0");
     if (fuel < amount)
         return false;
     fuel -= amount;
@@ -585,15 +589,15 @@ double FuelTank::getTotalMass() const {
     return mass + fuel * FUEL_UNIT_MASS;
 }
 
-std::string FuelTank::getTypeName() const { return "Топливный бак"; }
+string FuelTank::getTypeName() const { return "Топливный бак"; }
 
 // ----- Product -----
 Product::Product() : Entity(), Tradable(), unitMass(1) {}
 
-Product::Product(const std::string& name, int baseCost, double unitMass)
-    : Entity(name), Tradable(baseCost), unitMass(unitMass) {
+Product::Product(const string& name, int baseCost, double unitMass)
+    : Entity(name), Tradable(name, baseCost), unitMass(unitMass) {
     if (unitMass <= 0)
-        throw std::invalid_argument("Product: масса единицы не больше 0");
+        throw invalid_argument("Product: масса единицы не больше 0");
 }
 
 double Product::getUnitMass() const { return unitMass; }
@@ -602,7 +606,7 @@ bool Product::operator==(const Product& other) const {
     return name == other.name;
 }
 
-std::string Product::getTypeName() const { return "Товар"; }
+string Product::getTypeName() const { return "Товар"; }
 
 // ----- Cargo -----
 Cargo::Cargo() : product(nullptr), quantity(0), condition(100) {}
@@ -610,9 +614,9 @@ Cargo::Cargo() : product(nullptr), quantity(0), condition(100) {}
 Cargo::Cargo(const Product* product, int quantity, int condition)
     : product(product), quantity(quantity), condition(condition) {
     if (quantity < 0)
-        throw std::invalid_argument("Cargo: количество меньше 0");
+        throw invalid_argument("Cargo: количество меньше 0");
     if (condition < 0 || condition > 100)
-        throw std::invalid_argument("Cargo: состояние вне диапазона 0..100");
+        throw invalid_argument("Cargo: состояние вне диапазона 0..100");
 }
 
 const Product* Cargo::getProduct() const { return product; }
@@ -623,7 +627,7 @@ int Cargo::getCondition() const { return condition; }
 
 void Cargo::setQuantity(int quantity) {
     if (quantity < 0)
-        throw std::invalid_argument("Cargo: количество меньше 0");
+        throw invalid_argument("Cargo: количество меньше 0");
     this->quantity = quantity;
 }
 
@@ -659,16 +663,16 @@ Cargo Cargo::operator--(int) {
 
 Cargo& Cargo::operator-=(int amount) {
     if (amount < 0)
-        throw std::invalid_argument("Cargo: количество меньше 0");
+        throw invalid_argument("Cargo: количество меньше 0");
     if (amount > quantity)
-        throw std::out_of_range("Cargo: в партии меньше товара");
+        throw out_of_range("Cargo: в партии меньше товара");
     quantity -= amount;
     return *this;
 }
 
 Cargo operator+(const Cargo& a, const Cargo& b) {
     if (a.product == nullptr || b.product == nullptr || !(*a.product == *b.product))
-        throw std::invalid_argument("Cargo: сложение партий разных товаров");
+        throw invalid_argument("Cargo: сложение партий разных товаров");
     int total = a.quantity + b.quantity;
     int cond = 100;
     if (total > 0)
@@ -679,15 +683,15 @@ Cargo operator+(const Cargo& a, const Cargo& b) {
 // ----- CargoHold -----
 CargoHold::CargoHold() : Part(), cargoCapacity(50) {}
 
-CargoHold::CargoHold(const std::string& name, double mass, int maxDurability, int price, double cargoCapacity)
-    : Part(name, mass, maxDurability, price), cargoCapacity(cargoCapacity) {
+CargoHold::CargoHold(const string& name, double mass, int maxDurability, int price, double cargoCapacity)
+    : Entity(name), Part(name, mass, maxDurability, price), cargoCapacity(cargoCapacity) {
     if (cargoCapacity <= 0)
-        throw std::invalid_argument("CargoHold: грузоподъёмность не больше 0");
+        throw invalid_argument("CargoHold: грузоподъёмность не больше 0");
 }
 
 double CargoHold::getCargoCapacity() const { return cargoCapacity; }
 
-const std::vector<Cargo>& CargoHold::getCargo() const { return cargo; }
+const vector<Cargo>& CargoHold::getCargo() const { return cargo; }
 
 double CargoHold::getCargoMass() const {
     double sum = 0;
@@ -702,7 +706,7 @@ double CargoHold::getFreeCapacity() const {
 
 bool CargoHold::loadCargo(const Cargo& c) {
     if (c.getProduct() == nullptr)
-        throw std::invalid_argument("CargoHold: партия без товара");
+        throw invalid_argument("CargoHold: партия без товара");
     if (c.getMass() > getFreeCapacity())
         return false;
     for (size_t i = 0; i < cargo.size(); i++) {
@@ -715,22 +719,22 @@ bool CargoHold::loadCargo(const Cargo& c) {
     return true;
 }
 
-Cargo CargoHold::unloadCargo(const std::string& productName, int quantity) {
+Cargo CargoHold::unloadCargo(const string& productName, int quantity) {
     for (size_t i = 0; i < cargo.size(); i++) {
         if (cargo[i].getProduct()->getName() == productName) {
-            cargo[i] -= quantity;  // выбрасывает std::out_of_range, если товара мало
+            cargo[i] -= quantity;  // выбрасывает out_of_range, если товара мало
             Cargo result(cargo[i].getProduct(), quantity, cargo[i].getCondition());
             if (cargo[i].getQuantity() == 0)
                 cargo.erase(cargo.begin() + i);
             return result;
         }
     }
-    throw std::out_of_range("CargoHold: товара нет в трюме");
+    throw out_of_range("CargoHold: товара нет в трюме");
 }
 
 void CargoHold::loseCargo(int percent) {
     if (percent < 0 || percent > 100)
-        throw std::invalid_argument("CargoHold: процент вне диапазона 0..100");
+        throw invalid_argument("CargoHold: процент вне диапазона 0..100");
     for (size_t i = 0; i < cargo.size();) {
         int left = cargo[i].getQuantity() - cargo[i].getQuantity() * percent / 100;
         int cond = cargo[i].getCondition() - percent;
@@ -738,7 +742,8 @@ void CargoHold::loseCargo(int percent) {
             cond = 0;
         if (left == 0) {
             cargo.erase(cargo.begin() + i);
-        } else {
+        }
+        else {
             cargo[i] = Cargo(cargo[i].getProduct(), left, cond);
             i++;
         }
@@ -749,12 +754,12 @@ double CargoHold::getTotalMass() const {
     return mass + getCargoMass();
 }
 
-std::string CargoHold::getTypeName() const { return "Грузовой трюм"; }
+string CargoHold::getTypeName() const { return "Грузовой трюм"; }
 
 // ----- Ship -----
 Ship::Ship() : Entity(), hull(), location(nullptr), destination(nullptr), turnsLeft(0) {}
 
-Ship::Ship(const std::string& name, const Hull& hull, Planet* location)
+Ship::Ship(const string& name, const Hull& hull, Planet* location)
     : Entity(name), hull(hull), location(location), destination(nullptr), turnsLeft(0) {}
 
 Ship::~Ship() {
@@ -768,8 +773,8 @@ Ship::~Ship() {
 
 const Hull& Ship::getHull() const { return hull; }
 
-std::vector<Part*> Ship::getParts() {
-    std::vector<Part*> parts;
+vector<Part*> Ship::getParts() {
+    vector<Part*> parts;
     parts.push_back(&hull);
     for (size_t i = 0; i < engines.size(); i++)
         parts.push_back(engines[i]);
@@ -790,31 +795,31 @@ int Ship::getFreeSlots() const {
 
 void Ship::installEngine(Engine* engine) {
     if (engine == nullptr)
-        throw std::invalid_argument("Ship: нет двигателя");
+        throw invalid_argument("Ship: нет двигателя");
     if (getFreeSlots() == 0)
-        throw std::logic_error("Ship: на корпусе нет свободных мест");
+        throw logic_error("Ship: на корпусе нет свободных мест");
     engines.push_back(engine);
 }
 
 void Ship::installFuelTank(FuelTank* tank) {
     if (tank == nullptr)
-        throw std::invalid_argument("Ship: нет бака");
+        throw invalid_argument("Ship: нет бака");
     if (getFreeSlots() == 0)
-        throw std::logic_error("Ship: на корпусе нет свободных мест");
+        throw logic_error("Ship: на корпусе нет свободных мест");
     tanks.push_back(tank);
 }
 
 void Ship::installCargoHold(CargoHold* hold) {
     if (hold == nullptr)
-        throw std::invalid_argument("Ship: нет трюма");
+        throw invalid_argument("Ship: нет трюма");
     if (getFreeSlots() == 0)
-        throw std::logic_error("Ship: на корпусе нет свободных мест");
+        throw logic_error("Ship: на корпусе нет свободных мест");
     holds.push_back(hold);
 }
 
 double Ship::getTotalMass() const {
     // Для каждой детали через указатель Part* вызывается getTotalMass() её класса
-    std::vector<const Part*> parts;
+    vector<const Part*> parts;
     parts.push_back(&hull);
     for (size_t i = 0; i < engines.size(); i++)
         parts.push_back(engines[i]);
@@ -861,26 +866,26 @@ bool Ship::loadCargo(const Cargo& c) {
     return false;
 }
 
-Cargo Ship::unloadCargo(const std::string& productName, int quantity) {
+Cargo Ship::unloadCargo(const string& productName, int quantity) {
     if (quantity <= 0)
-        throw std::invalid_argument("Ship: количество не больше 0");
+        throw invalid_argument("Ship: количество не больше 0");
 
     // Сколько товара есть во всех трюмах
     int available = 0;
     for (size_t i = 0; i < holds.size(); i++) {
-        const std::vector<Cargo>& list = holds[i]->getCargo();
+        const vector<Cargo>& list = holds[i]->getCargo();
         for (size_t j = 0; j < list.size(); j++)
             if (list[j].getProduct()->getName() == productName)
                 available += list[j].getQuantity();
     }
     if (available < quantity)
-        throw std::out_of_range("Ship: товара в трюмах меньше, чем нужно");
+        throw out_of_range("Ship: товара в трюмах меньше, чем нужно");
 
     // Вынимаем товар из трюмов по очереди и складываем партии
     Cargo result;
     int left = quantity;
     for (size_t i = 0; i < holds.size() && left > 0; i++) {
-        const std::vector<Cargo>& list = holds[i]->getCargo();
+        const vector<Cargo>& list = holds[i]->getCargo();
         int inHold = 0;
         for (size_t j = 0; j < list.size(); j++)
             if (list[j].getProduct()->getName() == productName)
@@ -899,14 +904,14 @@ Cargo Ship::unloadCargo(const std::string& productName, int quantity) {
 }
 
 bool Ship::hasBrokenParts() {
-    std::vector<Part*> parts = getParts();
+    vector<Part*> parts = getParts();
     for (size_t i = 0; i < parts.size(); i++)
         if (parts[i]->isBroken())
             return true;
     return false;
 }
 
-std::string Ship::getTypeName() const { return "Корабль"; }
+string Ship::getTypeName() const { return "Корабль"; }
 
 bool Ship::canFlyTo(const Planet& target) {
     if (isInFlight() || location == nullptr || location == &target)
@@ -922,7 +927,7 @@ bool Ship::canFlyTo(const Planet& target) {
 
 void Ship::startFlight(Planet* target) {
     if (target == nullptr || !canFlyTo(*target))
-        throw std::logic_error("Ship: перелёт невозможен");
+        throw logic_error("Ship: перелёт невозможен");
 
     double distance = location->distanceTo(*target);
     double needFuel = 0;
@@ -936,7 +941,7 @@ void Ship::startFlight(Planet* target) {
         needFuel -= take;
     }
 
-    turnsLeft = (int)std::ceil(distance / getSpeed());
+    turnsLeft = (int)ceil(distance / getSpeed());
     if (turnsLeft < 1)
         turnsLeft = 1;
     destination = target;
@@ -956,14 +961,14 @@ void Ship::nextTurn() {
 
 void Ship::takeDamage(int damage) {
     // Для каждой детали вызывается takeDamage() её класса
-    std::vector<Part*> parts = getParts();
+    vector<Part*> parts = getParts();
     for (size_t i = 0; i < parts.size(); i++)
         parts[i]->takeDamage(damage);
 }
 
 void Ship::applyHazard(HazardType type, int power) {
     if (power < 0)
-        throw std::invalid_argument("Ship: сила опасности меньше 0");
+        throw invalid_argument("Ship: сила опасности меньше 0");
     switch (type) {
     case HazardType::Pirates:
         takeDamage(power);
@@ -1007,7 +1012,7 @@ MarketKind Market::getKind() const { return kind; }
 
 void Market::addStock(const Cargo& c) {
     if (c.getProduct() == nullptr)
-        throw std::invalid_argument("Market: партия без товара");
+        throw invalid_argument("Market: партия без товара");
     for (size_t i = 0; i < stock.size(); i++) {
         if (*stock[i].getProduct() == *c.getProduct()) {
             stock[i] = stock[i] + c;
@@ -1017,17 +1022,17 @@ void Market::addStock(const Cargo& c) {
     stock.push_back(c);
 }
 
-const std::vector<Cargo>& Market::getStock() const { return stock; }
+const vector<Cargo>& Market::getStock() const { return stock; }
 
-void Market::setPriceFactor(const std::string& productName, double factor) {
+void Market::setPriceFactor(const string& productName, double factor) {
     if (factor <= 0)
-        throw std::invalid_argument("Market: коэффициент не больше 0");
+        throw invalid_argument("Market: коэффициент не больше 0");
     priceFactors[productName] = factor;
 }
 
 int Market::getSellPrice(const Product& p) const {
     double factor = 1.0;
-    std::map<std::string, double>::const_iterator it = priceFactors.find(p.getName());
+    map<string, double>::const_iterator it = priceFactors.find(p.getName());
     if (it != priceFactors.end())
         factor = it->second;
     return (int)(p.getPrice() * factor + 0.5);
@@ -1037,7 +1042,7 @@ int Market::getBuyPrice(const Product& p) const {
     return (int)(getSellPrice(p) * BUY_RATIO);
 }
 
-bool Market::sellToPlayer(const std::string& productName, int quantity, Player& player, Ship& ship) {
+bool Market::sellToPlayer(const string& productName, int quantity, Player& player, Ship& ship) {
     if (quantity <= 0)
         return false;
     if (kind == MarketKind::Warehouse && quantity < WHOLESALE_MIN)
@@ -1063,13 +1068,14 @@ bool Market::sellToPlayer(const std::string& productName, int quantity, Player& 
     return false;
 }
 
-bool Market::buyFromPlayer(const std::string& productName, int quantity, Player& player, Ship& ship) {
+bool Market::buyFromPlayer(const string& productName, int quantity, Player& player, Ship& ship) {
     if (quantity <= 0)
         return false;
     Cargo sold;
     try {
         sold = ship.unloadCargo(productName, quantity);
-    } catch (const std::out_of_range&) {
+    }
+    catch (const out_of_range&) {
         return false;
     }
     int income = getBuyPrice(*sold.getProduct()) * sold.getQuantity() * sold.getCondition() / 100;
@@ -1125,7 +1131,7 @@ Shipyard::Shipyard() : repairCostPerPoint(5) {}
 
 Shipyard::Shipyard(int repairCostPerPoint) : repairCostPerPoint(repairCostPerPoint) {
     if (repairCostPerPoint <= 0)
-        throw std::invalid_argument("Shipyard: цена ремонта не больше 0");
+        throw invalid_argument("Shipyard: цена ремонта не больше 0");
 }
 
 Shipyard::~Shipyard() {
@@ -1139,27 +1145,27 @@ Shipyard::~Shipyard() {
 
 void Shipyard::addEngine(Engine* engine) {
     if (engine == nullptr)
-        throw std::invalid_argument("Shipyard: нет двигателя");
+        throw invalid_argument("Shipyard: нет двигателя");
     engines.push_back(engine);
 }
 
 void Shipyard::addFuelTank(FuelTank* tank) {
     if (tank == nullptr)
-        throw std::invalid_argument("Shipyard: нет бака");
+        throw invalid_argument("Shipyard: нет бака");
     tanks.push_back(tank);
 }
 
 void Shipyard::addCargoHold(CargoHold* hold) {
     if (hold == nullptr)
-        throw std::invalid_argument("Shipyard: нет трюма");
+        throw invalid_argument("Shipyard: нет трюма");
     holds.push_back(hold);
 }
 
-const std::vector<Engine*>& Shipyard::getEngines() const { return engines; }
+const vector<Engine*>& Shipyard::getEngines() const { return engines; }
 
-const std::vector<FuelTank*>& Shipyard::getFuelTanks() const { return tanks; }
+const vector<FuelTank*>& Shipyard::getFuelTanks() const { return tanks; }
 
-const std::vector<CargoHold*>& Shipyard::getCargoHolds() const { return holds; }
+const vector<CargoHold*>& Shipyard::getCargoHolds() const { return holds; }
 
 bool Shipyard::sellEngine(int index, Player& player, Ship& ship) {
     if (index < 0 || index >= (int)engines.size())
@@ -1216,7 +1222,7 @@ bool Shipyard::repairShip(Ship& ship, Player& player) {
     if (!player.canPay(cost))
         return false;
     player.pay(cost);
-    std::vector<Part*> parts = ship.getParts();
+    vector<Part*> parts = ship.getParts();
     for (size_t i = 0; i < parts.size(); i++)
         parts[i]->repair(parts[i]->getMaxDurability());
     return true;
@@ -1225,15 +1231,15 @@ bool Shipyard::repairShip(Ship& ship, Player& player) {
 // ----- Planet -----
 Planet::Planet()
     : Entity(), x(0), y(0), economy(EconomyType::Agrarian),
-      event(EventType::None), eventTurnsLeft(0), market(), shipyard() {
+    event(EventType::None), eventTurnsLeft(0), market(), shipyard() {
     market.applyEconomy(economy);
 }
 
-Planet::Planet(const std::string& name, double x, double y, EconomyType economy)
+Planet::Planet(const string& name, double x, double y, EconomyType economy)
     : Entity(name), x(x), y(y), economy(economy),
-      event(EventType::None), eventTurnsLeft(0), market(), shipyard() {
+    event(EventType::None), eventTurnsLeft(0), market(), shipyard() {
     if (x < 0 || x > MAP_SIZE - 1 || y < 0 || y > MAP_SIZE - 1)
-        throw std::invalid_argument("Planet: координаты вне карты");
+        throw invalid_argument("Planet: координаты вне карты");
     market.applyEconomy(economy);
 }
 
@@ -1248,12 +1254,12 @@ EventType Planet::getEvent() const { return event; }
 double Planet::distanceTo(const Planet& other) const {
     double dx = x - other.x;
     double dy = y - other.y;
-    return std::sqrt(dx * dx + dy * dy);
+    return sqrt(dx * dx + dy * dy);
 }
 
 void Planet::startEvent(EventType event, int turns) {
     if (turns < 0)
-        throw std::invalid_argument("Planet: число ходов меньше 0");
+        throw invalid_argument("Planet: число ходов меньше 0");
     this->event = event;
     eventTurnsLeft = (event == EventType::None) ? 0 : turns;
     market.applyEvent(this->event);
@@ -1273,14 +1279,14 @@ Market& Planet::getMarket() { return market; }
 
 Shipyard& Planet::getShipyard() { return shipyard; }
 
-std::string Planet::getTypeName() const { return "Планета"; }
+string Planet::getTypeName() const { return "Планета"; }
 
 // ----- Player -----
 Player::Player() : Entity(), balance(0) {}
 
-Player::Player(const std::string& name, int balance) : Entity(name), balance(balance) {
+Player::Player(const string& name, int balance) : Entity(name), balance(balance) {
     if (balance < 0)
-        throw std::invalid_argument("Player: баланс меньше 0");
+        throw invalid_argument("Player: баланс меньше 0");
 }
 
 Player::~Player() {
@@ -1292,7 +1298,7 @@ int Player::getBalance() const { return balance; }
 
 void Player::setBalance(int balance) {
     if (balance < 0)
-        throw std::invalid_argument("Player: баланс меньше 0");
+        throw invalid_argument("Player: баланс меньше 0");
     this->balance = balance;
 }
 
@@ -1300,33 +1306,33 @@ bool Player::canPay(int amount) const { return balance >= amount; }
 
 void Player::pay(int amount) {
     if (amount < 0)
-        throw std::invalid_argument("Player: сумма меньше 0");
+        throw invalid_argument("Player: сумма меньше 0");
     if (!canPay(amount))
-        throw std::runtime_error("Player: не хватает денег");
+        throw runtime_error("Player: не хватает денег");
     balance -= amount;
 }
 
 void Player::earn(int amount) {
     if (amount < 0)
-        throw std::invalid_argument("Player: сумма меньше 0");
+        throw invalid_argument("Player: сумма меньше 0");
     balance += amount;
 }
 
 void Player::addShip(Ship* ship) {
     if (ship == nullptr)
-        throw std::invalid_argument("Player: нет корабля");
+        throw invalid_argument("Player: нет корабля");
     fleet.push_back(ship);
 }
 
 Ship& Player::getShip(int index) {
     if (index < 0 || index >= (int)fleet.size())
-        throw std::out_of_range("Player: нет корабля с таким номером");
+        throw out_of_range("Player: нет корабля с таким номером");
     return *fleet[index];
 }
 
 int Player::getFleetSize() const { return (int)fleet.size(); }
 
-std::string Player::getTypeName() const { return "Игрок"; }
+string Player::getTypeName() const { return "Игрок"; }
 
 // ===== Проверка классов =====
 // Проверка классов предметной области «Space Tracking».
@@ -1335,32 +1341,30 @@ std::string Player::getTypeName() const { return "Игрок"; }
 
 
 static void printShip(Ship& ship) {
-    std::printf("%s «%s»: масса %.2f т, скорость %.2f св. лет/ход, топливо %.1f\n",
-                ship.getTypeName().c_str(), ship.getName().c_str(),
-                ship.getTotalMass(), ship.getSpeed(), ship.getFuel());
-    std::vector<Part*> parts = ship.getParts();
+    printf("%s «%s»: масса %.2f т, скорость %.2f св. лет/ход, топливо %.1f\n",
+        ship.getTypeName().c_str(), ship.getName().c_str(),
+        ship.getTotalMass(), ship.getSpeed(), ship.getFuel());
+    vector<Part*> parts = ship.getParts();
     for (size_t i = 0; i < parts.size(); i++) {
-        std::printf("  %-14s %-22s прочность %3d/%-3d масса с содержимым %.2f т\n",
-                    parts[i]->getTypeName().c_str(), parts[i]->getName().c_str(),
-                    parts[i]->getDurability(), parts[i]->getMaxDurability(),
-                    parts[i]->getTotalMass());
+        printf("  %-14s %-22s прочность %3d/%-3d масса с содержимым %.2f т\n",
+            parts[i]->getTypeName().c_str(), parts[i]->getName().c_str(),
+            parts[i]->getDurability(), parts[i]->getMaxDurability(),
+            parts[i]->getTotalMass());
     }
 }
 
 static void printStock(Market& market, const char* planetName) {
-    std::printf("Рынок планеты %s:\n", planetName);
-    const std::vector<Cargo>& stock = market.getStock();
+    printf("Рынок планеты %s:\n", planetName);
+    const vector<Cargo>& stock = market.getStock();
     for (size_t i = 0; i < stock.size(); i++) {
         const Product* p = stock[i].getProduct();
-        std::printf("  %-22s %4d шт.  продажа %4d  покупка %4d\n", p->getName().c_str(),
-                    stock[i].getQuantity(), market.getSellPrice(*p), market.getBuyPrice(*p));
+        printf("  %-22s %4d шт.  продажа %4d  покупка %4d\n", p->getName().c_str(),
+            stock[i].getQuantity(), market.getSellPrice(*p), market.getBuyPrice(*p));
     }
 }
 
 int main() {
-#ifdef _WIN32
-    SetConsoleOutputCP(CP_UTF8);
-#endif
+    setlocale(LC_ALL, "Russian");
     try {
         // Каталог товаров
         Product food("Еда", 20, 0.5);
@@ -1388,7 +1392,7 @@ int main() {
         yard.sellEngine(0, player, *ship);
         yard.sellFuelTank(0, player, *ship);
         yard.sellCargoHold(0, player, *ship);
-        std::printf("После покупки деталей баланс: %d\n", player.getBalance());
+        printf("После покупки деталей баланс: %d\n", player.getBalance());
 
         ship->refuel(100);
         printShip(*ship);
@@ -1396,27 +1400,36 @@ int main() {
         // Покупка товара
         printStock(terra.getMarket(), terra.getName().c_str());
         if (terra.getMarket().sellToPlayer("Еда", 60, player, *ship))
-            std::printf("Куплено 60 ед. еды. Баланс: %d\n", player.getBalance());
+            printf("Куплено 60 ед. еды. Баланс: %d\n", player.getBalance());
 
         // Перелёт
-        std::printf("Расстояние Терра — Нова: %.2f св. лет\n", terra.distanceTo(nova));
+        printf("Расстояние Терра — Нова: %.2f св. лет\n", terra.distanceTo(nova));
         ship->startFlight(&nova);
         ship->applyHazard(HazardType::Pirates, 10);
-        std::printf("Нападение пиратов во время перелёта.\n");
+        printf("Нападение пиратов во время перелёта.\n");
         while (ship->isInFlight())
             ship->nextTurn();
-        std::printf("Корабль прибыл на планету %s.\n", ship->getLocation()->getName().c_str());
+        printf("Корабль прибыл на планету %s.\n", ship->getLocation()->getName().c_str());
         printShip(*ship);
 
         // Событие на планете и продажа товара
         nova.startEvent(EventType::Catastrophe, 3);
         if (nova.getMarket().buyFromPlayer("Еда", 54, player, *ship))
-            std::printf("Продано 54 ед. еды. Баланс: %d\n", player.getBalance());
+            printf("Продано 54 ед. еды. Баланс: %d\n", player.getBalance());
 
         // Ремонт
-        std::printf("Цена ремонта: %d\n", nova.getShipyard().getRepairCost(*ship));
+        printf("Цена ремонта: %d\n", nova.getShipyard().getRepairCost(*ship));
         if (nova.getShipyard().repairShip(*ship, player))
-            std::printf("Корабль отремонтирован. Баланс: %d\n", player.getBalance());
+            printf("Корабль отремонтирован. Баланс: %d\n", player.getBalance());
+
+        // Виртуальный базовый класс: в детали один подобъект Entity.
+        // Через Damageable и через Tradable видны одни и те же id и name.
+        Engine testEngine("Плазменный П-2", 4, 70, 1500, 120, 0.8);
+        Damageable* asDamageable = &testEngine;
+        Tradable* asTradable = &testEngine;
+        printf("Через Damageable: id %d, %s. Через Tradable: id %d, %s.\n",
+            asDamageable->getId(), asDamageable->getName().c_str(),
+            asTradable->getId(), asTradable->getName().c_str());
 
         // Операторы класса Cargo
         Cargo a(&food, 10, 100);
@@ -1424,11 +1437,12 @@ int main() {
         Cargo c = a + b;
         ++c;
         c -= 5;
-        std::printf("Партия: %d шт., состояние %d%%\n", c.getQuantity(), c.getCondition());
+        printf("Партия: %d шт., состояние %d%%\n", c.getQuantity(), c.getCondition());
 
-        std::printf("Цель игры: %d кредитов за %d ходов.\n", TARGET_BALANCE, MAX_TURNS);
-    } catch (const std::exception& e) {
-        std::printf("Ошибка: %s\n", e.what());
+        printf("Цель игры: %d кредитов за %d ходов.\n", TARGET_BALANCE, MAX_TURNS);
+    }
+    catch (const exception& e) {
+        printf("Ошибка: %s\n", e.what());
         return 1;
     }
     return 0;
